@@ -203,6 +203,11 @@ async def job_pregerar(context: ContextTypes.DEFAULT_TYPE) -> None:
         await context.bot.send_message(chat_id=context.job.chat_id, text=texto[:4096])
 
 
+async def job_completar(context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Todo dia cedo (depois que a cota gratuita do Gemini renova): preenche questionários que faltaram."""
+    await _pregerar(context, _hoje(context))
+
+
 def criar_app(ctx: Contexto, cliente, habilidades: dict, token: str) -> Application:
     app = Application.builder().token(token).build()
     app.bot_data.update({"ctx": ctx, "cliente": cliente, "habilidades": habilidades})
@@ -220,4 +225,5 @@ def criar_app(ctx: Contexto, cliente, habilidades: dict, token: str) -> Applicat
     app.job_queue.run_daily(job_envio, time=hora, days=(1, 2, 3, 4, 5), chat_id=chat, name="envio")
     app.job_queue.run_daily(job_pregerar, time=time(20, 0, tzinfo=FUSO), days=(0,), chat_id=chat, name="pregerar")
     app.job_queue.run_once(job_pregerar, when=10, chat_id=chat, name="pregerar-inicial")  # recupera ao ligar
+    app.job_queue.run_daily(job_completar, time=time(5, 15, tzinfo=FUSO), chat_id=chat, name="completar")
     return app

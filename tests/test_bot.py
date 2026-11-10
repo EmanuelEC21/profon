@@ -117,7 +117,7 @@ def test_envio_diario_sem_aula_nao_envia(ctx):
 
 def test_criar_app_agenda_jobs(ctx):
     app = bot.criar_app(ctx, None, {}, "123456:TESTE")
-    assert {j.name for j in app.job_queue.jobs()} == {"envio", "pregerar", "pregerar-inicial"}
+    assert {j.name for j in app.job_queue.jobs()} == {"envio", "pregerar", "pregerar-inicial", "completar"}
 
 
 def test_job_semanal_avisa_atraso_sem_cancelamento(ctx):
@@ -143,3 +143,14 @@ def test_main_carrega_contexto(tmp_path):
     # o exemplo só tem a sequência do 6º ano: as outras turmas geram aviso, o 6º não
     assert any("1º A" in a for a in avisos)
     assert not any("6ano" in a or "6º A" in a for a in avisos)
+
+
+def test_job_completar_prepara_sem_alertas(ctx):
+    from tests.test_questionario import QUATRO, ClienteFalso
+
+    c = _context(ctx, SEG1)
+    c.bot_data["cliente"] = ClienteFalso(QUATRO)
+    c.job = SimpleNamespace(chat_id=1)
+    _rodar(bot.job_completar(c))
+    assert ctx.estado.questionario("6ano", "6-a#1/2") is not None
+    c.bot.send_message.assert_not_called()  # silencioso: só preenche lacunas

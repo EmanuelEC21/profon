@@ -147,3 +147,26 @@ def test_gemini_sobrecarregado_espera_e_tenta_de_novo():
                         intervalo=0, espera_sobrecarga=30.0, relogio=rel, dormir=rel.dormir)
     assert cli.completar("s", "m") == "ok"
     assert 30.0 in rel.esperas
+
+
+def test_gemini_cota_diaria_esgotada_nao_insiste():
+    class ErroCota(Exception):
+        code = 429
+
+        def __str__(self):
+            return "quotaId: GenerateRequestsPerDayPerProjectPerModel-FreeTier"
+
+    class Modelos:
+        tentados = []
+
+        def generate_content(self, **kw):
+            Modelos.tentados.append(kw["model"])
+            raise ErroCota()
+
+    rel = _Relogio()
+    cli = ClienteGemini("a", sdk=SimpleNamespace(models=Modelos()), reservas=("b",), intervalo=0,
+                        relogio=rel, dormir=rel.dormir)
+    with pytest.raises(ErroCota):
+        cli.completar("s", "m")
+    assert Modelos.tentados == ["a", "b"]  # tenta a reserva (cota é por modelo), mas não faz novas rodadas
+    assert rel.esperas == []

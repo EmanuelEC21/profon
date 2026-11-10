@@ -79,10 +79,16 @@ class ClienteGemini:
     def _gerar(self, mensagem: str, config):
         """Tenta o modelo principal e as reservas; em sobrecarga, espera e faz nova rodada."""
         for rodada in range(self.rodadas):
+            cota_diaria = 0
             for i, modelo in enumerate(self.modelos):
                 try:
                     return self.sdk.models.generate_content(model=modelo, contents=mensagem, config=config)
                 except Exception as e:
+                    if "PerDay" in str(e):  # cota do dia deste modelo acabou: só a reserva pode ajudar
+                        cota_diaria += 1
+                        if cota_diaria == len(self.modelos):
+                            raise
+                        continue
                     ultima_tentativa = rodada == self.rodadas - 1 and i == len(self.modelos) - 1
                     if getattr(e, "code", None) not in self._PASSAGEIROS or ultima_tentativa:
                         raise

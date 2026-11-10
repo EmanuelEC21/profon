@@ -46,7 +46,8 @@ Nada muda sem o seu ✅.
 
 - **Mexer na sequência (`data/sequencias/*.yaml`) no meio do ano** muda a agenda desde o começo do ano, porque o Profon recalcula a fila a partir das datas. Se precisar trocar algo, mude **apenas conteúdos que ainda não foram dados**, e sem mudar a ordem nem as aulas dos que já foram.
 - **Acelerar** vale só para a turma do aviso e nunca apaga aulas já dadas. Se o conteúdo já começou, ele só corta as aulas que ainda faltam.
-- Ao ligar o bot, ele prepara os questionários da semana e verifica atrasos. No domingo à noite faz isso de novo.
+- Ao ligar o bot, ele prepara os questionários da semana e verifica atrasos. No domingo à noite faz isso de novo, e todo dia às 5h15 completa o que faltou.
+- **Gemini gratuito:** 20 pedidos por dia em cada modelo. O Profon usa uns 13 por semana. Se um dia faltar questionário, ele tenta de novo na madrugada seguinte.
 
 ## Planejamento mensal (PDF para a plataforma)
 

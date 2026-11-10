@@ -28,7 +28,7 @@ Também remaneja a fila de cada turma quando uma aula não acontece.
 | `profon/agenda.py` | `datas_de_aula`, `montar_agenda` → `AulaPlanejada`, `verificar_atraso` → `Atraso`: agenda derivada e atraso |
 | `profon/acoes.py` | `pergunta_sem_aula`, `confirmar_sem_aula`, `atrasos`, `texto_atraso`, `aplicar_compressao`: regras do bot sem Telegram |
 | `profon/mensagem.py` | `Contexto`, `aulas_do_dia`, `chave_aula`, `pregerar` (lote semanal; questionário guardado por sequência, compartilhado entre turmas) e `compor_mensagens` (texto da manhã, divide acima de 4096) |
-| `profon/bot.py` | Telegram: `/start /hoje /amanha /semaula /naoterminou`, texto livre "não teve aula", botões (`sem:*`, `nt:*`, `acel:*`), jobs (envio seg a sex no horário configurado; pré-geração domingo 20h); `criar_app` |
+| `profon/bot.py` | Telegram: `/start /hoje /amanha /semaula /naoterminou`, texto livre "não teve aula", botões (`sem:*`, `nt:*`, `acel:*`), jobs (envio seg a sex no horário configurado; pré-geração e atrasos domingo 20h e ao ligar; `completar` todo dia 5h15 preenche lacunas); `criar_app` |
 | `profon/__main__.py` | `python -m profon`: `carregar_contexto` (YAML, sequências, BNCC, banco) e polling |
 | `docs/guia-do-professor.md` | guia de uso para o professor |
 | `profon/planejamento.py` | planejamento mensal oficial: `validar_planejamento`, `montar_tarefas` (modelo = mesmo ano no mês anterior) |
