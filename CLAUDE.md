@@ -26,8 +26,8 @@ Também remaneja a fila de cada turma quando uma aula não acontece.
 | `profon/ia.py` | `ClienteIA` (protocolo), `ClienteClaude` (SDK, fallback de recusa), `RecusaIA`; questionário (Task 7) |
 | `profon/estado.py` | `Estado` (SQLite): cancelamentos, ajustes de compressão e questionários. Só eventos |
 | `profon/agenda.py` | `datas_de_aula`, `montar_agenda` → `AulaPlanejada`, `verificar_atraso` → `Atraso`: agenda derivada e atraso |
-| `profon/acoes.py` | *(a criar, Task 6)* regras do bot sem Telegram: "não teve aula" e compressão |
-| `profon/mensagem.py` | *(a criar, Tasks 6 e 7)* aulas do dia e texto da mensagem da manhã |
+| `profon/acoes.py` | `pergunta_sem_aula`, `confirmar_sem_aula`, `atrasos`, `texto_atraso`, `aplicar_compressao`: regras do bot sem Telegram |
+| `profon/mensagem.py` | `Contexto`, `agenda_da_turma`, `turmas_do_dia`, `aulas_do_dia`; mensagem da manhã (Task 7) |
 | `profon/bot.py`, `profon/__main__.py` | *(a criar, Task 8)* Telegram: comandos, botões e jobs agendados |
 | `config/escola.example.yaml` | modelo de configuração (copiar para `config/escola.yaml`) |
 | `docs/arquitetura.md` | como as partes conversam |
