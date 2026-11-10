@@ -3,6 +3,7 @@
 ## O que o Profon faz por você
 
 - **Todo dia de manhã (segunda a sexta, às 6h)** chega no Telegram uma mensagem com as turmas do dia, o conteúdo de cada uma (com o código da BNCC) e um questionário de 3 a 5 perguntas para passar no quadro.
+- **Logo abaixo vem a folha do dia em PDF (A4)**, para imprimir. Ela traz, por turma, o **roteiro do professor** (os tópicos a explicar naquela aula, com uma explicação curta de cada um) e o questionário. Turmas com a mesma aula aparecem juntas, para economizar papel.
 - **Quando uma aula não acontece**, você avisa e ele empurra o conteúdo de cada turma para a próxima aula **daquela turma**.
 - **Se uma turma começar a atrasar**, ele avisa e sugere quais conteúdos dá para acelerar. Você aprova com um toque.
 - **No domingo à noite**, ele prepara os questionários da semana. Se algo falhar, ele avisa.

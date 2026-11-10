@@ -7,7 +7,7 @@ from tests.conftest import SEG1, TER1
 
 
 def _update(chat_id=1, data=None, texto="/x"):
-    msg = SimpleNamespace(reply_text=AsyncMock(), text=texto)
+    msg = SimpleNamespace(reply_text=AsyncMock(), reply_document=AsyncMock(), text=texto)
     q = None
     if data is not None:
         q = SimpleNamespace(data=data, answer=AsyncMock(), edit_message_text=AsyncMock(), message=msg)
@@ -23,7 +23,7 @@ def _context(ctx, hoje, args=()):
         coro.close()  # não roda: só registra que foi agendada sem bloquear o handler
 
     return SimpleNamespace(
-        bot_data=dados, args=list(args), bot=SimpleNamespace(send_message=AsyncMock()),
+        bot_data=dados, args=list(args), bot=SimpleNamespace(send_message=AsyncMock(), send_document=AsyncMock()),
         application=SimpleNamespace(create_task=create_task), tarefas=tarefas,
     )
 
@@ -167,3 +167,37 @@ def test_aviso_de_pendencias_e_curto_e_explica(ctx):
     [aviso] = [ch.kwargs["text"] for ch in c.bot.send_message.call_args_list if "questionário" in ch.kwargs["text"]]
     assert len(aviso) < 600
     assert "5h15" in aviso and "cota diária do Gemini esgotada" in aviso
+
+
+def test_hoje_manda_a_folha_em_pdf(ctx):
+    up = _update()
+    _rodar(bot.cmd_hoje(up, _context(ctx, SEG1)))
+    doc = up.message.reply_document.call_args
+    assert doc.kwargs["filename"] == "aulas-2027-03-01.pdf"
+    assert doc.kwargs["document"][:4] == b"%PDF"
+
+
+def test_envio_diario_manda_a_folha(ctx):
+    c = _context(ctx, SEG1)
+    c.job = SimpleNamespace(chat_id=1)
+    _rodar(bot.job_envio(c))
+    assert c.bot.send_document.call_args.kwargs["filename"] == "aulas-2027-03-01.pdf"
+
+
+def test_sem_aula_sem_folha(ctx):
+    c = _context(ctx, TER1)
+    c.job = SimpleNamespace(chat_id=1)
+    _rodar(bot.job_envio(c))
+    c.bot.send_document.assert_not_called()
+
+
+def test_falha_no_pdf_nao_impede_a_mensagem(ctx, monkeypatch):
+    def quebra(*a, **k):
+        raise RuntimeError("fonte sumiu")
+
+    monkeypatch.setattr(bot, "gerar_folha", quebra)
+    c = _context(ctx, SEG1)
+    c.job = SimpleNamespace(chat_id=1)
+    _rodar(bot.job_envio(c))
+    assert c.bot.send_message.call_args_list[0].kwargs["text"].startswith("☀️")
+    c.bot.send_document.assert_not_called()

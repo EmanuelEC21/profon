@@ -23,14 +23,15 @@ Também remaneja a fila de cada turma quando uma aula não acontece.
 | `profon/sequencia.py` | `Conteudo`, `carregar_sequencia`, `validar_sequencia`: sequência de conteúdos por ano |
 | `data/sequencias/<nome>.yaml` | sequências; cada turma usa a do seu campo `sequencia` (padrão `<ano>ano`) |
 | `scripts/gerar_sequencia.py` | rascunho da sequência de um ano via IA, para o professor revisar |
-| `profon/ia.py` | `ClienteIA` (protocolo), `ClienteClaude` (SDK, fallback de recusa), `ClienteGemini` (google-genai; intervalo de 13 s entre pedidos, modelo reserva e nova rodada em sobrecarga), `criar_cliente(provedor, modelo)`, `RecusaIA`, `gerar_questionario` (3 a 5 perguntas) |
-| `profon/estado.py` | `Estado` (SQLite): cancelamentos, ajustes de compressão e questionários. Só eventos |
+| `profon/ia.py` | `ClienteIA` (protocolo), `ClienteClaude` (SDK, fallback de recusa), `ClienteGemini` (google-genai; intervalo de 13 s entre pedidos, modelo reserva e nova rodada em sobrecarga), `criar_cliente(provedor, modelo)`, `RecusaIA`, `gerar_material` (roteiro de 3 a 6 tópicos + 3 a 5 perguntas, num pedido só, em JSON) |
+| `profon/estado.py` | `Estado` (SQLite): cancelamentos, ajustes de compressão e materiais (`salvar_material`/`material`; lê questionários antigos). Só eventos |
 | `profon/agenda.py` | `datas_de_aula`, `montar_agenda` → `AulaPlanejada`, `verificar_atraso` → `Atraso`: agenda derivada e atraso |
 | `profon/acoes.py` | `pergunta_sem_aula`, `confirmar_sem_aula`, `atrasos`, `texto_atraso`, `aplicar_compressao`: regras do bot sem Telegram |
-| `profon/mensagem.py` | `Contexto`, `aulas_do_dia`, `chave_aula`, `pregerar` (lote semanal; questionário guardado por sequência, compartilhado entre turmas) e `compor_mensagens` (texto da manhã, divide acima de 4096) |
+| `profon/mensagem.py` | `Contexto`, `aulas_do_dia`, `chave_aula`, `pregerar` (lote semanal; material guardado por sequência, compartilhado entre turmas; refaz o que não tem roteiro), `motivo_falha` e `compor_mensagens` (HTML: negrito, uma turma por linha, sem itálico; divide acima de 4096) |
 | `profon/bot.py` | Telegram: `/start /hoje /amanha /semaula /naoterminou`, texto livre "não teve aula", botões (`sem:*`, `nt:*`, `acel:*`), jobs (envio seg a sex no horário configurado; pré-geração e atrasos domingo 20h e ao ligar; `completar` todo dia 5h15 preenche lacunas); `criar_app` |
 | `profon/__main__.py` | `python -m profon`: `carregar_contexto` (YAML, sequências, BNCC, banco) e polling |
 | `docs/guia-do-professor.md` | guia de uso para o professor |
+| `profon/folha.py` | `gerar_folha(ctx, dia)` → PDF A4 do dia (fpdf2): turmas, roteiro do professor e questões; turmas com a mesma aula saem juntas |
 | `profon/planejamento.py` | planejamento mensal oficial: `validar_planejamento`, `montar_tarefas` (modelo = mesmo ano no mês anterior) |
 | `data/planejamentos/AAAA-MM.yaml` | conteúdo do planejamento do mês (7 campos por ano, 1º ao 9º) |
 | `scripts/gerar_planejamento.py` + `scripts/preencher_planejamento.ps1` | geram `planejamentos/<pasta>/<MÊS> - N ANO - LP.docx/.pdf` pelo Word e copiam o PDF para `Por Ano/` |

@@ -12,6 +12,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Application, CallbackQueryHandler, CommandHandler, ContextTypes, MessageHandler, filters
 
 from profon.acoes import aplicar_compressao, atrasos, confirmar_sem_aula, pergunta_sem_aula, texto_atraso
+from profon.folha import gerar_folha, nome_arquivo
 from profon.mensagem import Contexto, compor_mensagens, pregerar, turmas_do_dia
 
 FUSO = ZoneInfo("America/Fortaleza")
@@ -20,8 +21,8 @@ _NAO_TEVE_AULA = re.compile(r"n[ãa]o\s+(teve|tive|houve)\s+aula", re.IGNORECASE
 log = logging.getLogger("profon")
 
 AJUDA = """Olá! Eu sou o Profon. Comandos:
-/hoje: aulas e questionários de hoje
-/amanha: aulas de amanhã
+/hoje: aulas de hoje, com a folha para imprimir
+/amanha: aulas de amanhã, com a folha para imprimir
 /semaula [motivo]: hoje não teve aula (empurra o conteúdo das turmas)
 /naoterminou: uma turma não terminou o conteúdo de hoje
 Você também pode escrever "hoje não teve aula"."""
@@ -56,11 +57,20 @@ def _botoes_confirmacao(dia: date, turma: str = "", motivo: str = "") -> InlineK
     return _teclado([("✅ Sim", f"sem:sim:{dia.isoformat()}:{turma}:{motivo}"), ("❌ Não", "sem:nao")])
 
 
-async def _enviar_dia(enviar, context, dia: date, botao: bool) -> bool:
+async def _enviar_dia(enviar, context, dia: date, botao: bool, enviar_doc=None) -> bool:
+    """Mensagem do dia (HTML) e, logo abaixo, a folha A4 em PDF. Falha no PDF não impede a mensagem."""
     msgs = compor_mensagens(_ctx(context), dia)
     for i, m in enumerate(msgs):
         ultimo = i == len(msgs) - 1
         await enviar(m, reply_markup=_botao_sem_aula(dia) if botao and ultimo else None, parse_mode="HTML")
+    if msgs and enviar_doc is not None:
+        try:
+            pdf = gerar_folha(_ctx(context), dia)
+        except Exception:
+            log.exception("falha ao gerar a folha do dia %s", dia)
+            pdf = None
+        if pdf:
+            await enviar_doc(document=pdf, filename=nome_arquivo(dia), caption="📄 Folha do dia para imprimir")
     return bool(msgs)
 
 
@@ -79,14 +89,15 @@ async def cmd_hoje(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not _autorizado(update, context):
         return
     dia = _hoje(context)
-    if not await _enviar_dia(update.message.reply_text, context, dia, botao=True):
+    if not await _enviar_dia(update.message.reply_text, context, dia, botao=True, enviar_doc=update.message.reply_document):
         await update.message.reply_text(SEM_AULAS)
 
 
 async def cmd_amanha(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not _autorizado(update, context):
         return
-    if not await _enviar_dia(update.message.reply_text, context, _hoje(context) + timedelta(days=1), botao=False):
+    amanha = _hoje(context) + timedelta(days=1)
+    if not await _enviar_dia(update.message.reply_text, context, amanha, botao=False, enviar_doc=update.message.reply_document):
         await update.message.reply_text("Você não tem aula registrada amanhã.")
 
 
@@ -190,7 +201,10 @@ async def job_envio(context: ContextTypes.DEFAULT_TYPE) -> None:
     async def enviar(texto, reply_markup=None, parse_mode=None):
         await context.bot.send_message(chat_id=context.job.chat_id, text=texto, reply_markup=reply_markup, parse_mode=parse_mode)
 
-    await _enviar_dia(enviar, context, _hoje(context), botao=True)
+    async def enviar_doc(**kw):
+        await context.bot.send_document(chat_id=context.job.chat_id, **kw)
+
+    await _enviar_dia(enviar, context, _hoje(context), botao=True, enviar_doc=enviar_doc)
 
 
 async def job_pregerar(context: ContextTypes.DEFAULT_TYPE) -> None:
