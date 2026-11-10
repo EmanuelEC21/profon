@@ -23,7 +23,7 @@ Também remaneja a fila de cada turma quando uma aula não acontece.
 | `profon/sequencia.py` | `Conteudo`, `carregar_sequencia`, `validar_sequencia`: sequência de conteúdos por ano |
 | `data/sequencias/<N>ano.yaml` | sequência de cada ano (o `6ano.yaml` é exemplo) |
 | `scripts/gerar_sequencia.py` | rascunho da sequência de um ano via IA, para o professor revisar |
-| `profon/ia.py` | `ClienteIA` (protocolo), `ClienteClaude` (SDK, fallback de recusa), `RecusaIA`, `gerar_questionario` (3 a 5 perguntas) |
+| `profon/ia.py` | `ClienteIA` (protocolo), `ClienteClaude` (SDK, fallback de recusa), `ClienteGemini` (google-genai), `criar_cliente(provedor, modelo)`, `RecusaIA`, `gerar_questionario` (3 a 5 perguntas) |
 | `profon/estado.py` | `Estado` (SQLite): cancelamentos, ajustes de compressão e questionários. Só eventos |
 | `profon/agenda.py` | `datas_de_aula`, `montar_agenda` → `AulaPlanejada`, `verificar_atraso` → `Atraso`: agenda derivada e atraso |
 | `profon/acoes.py` | `pergunta_sem_aula`, `confirmar_sem_aula`, `atrasos`, `texto_atraso`, `aplicar_compressao`: regras do bot sem Telegram |

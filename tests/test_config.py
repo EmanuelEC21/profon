@@ -72,3 +72,28 @@ def test_turma_duplicada_falha(tmp_path):
     )
     with pytest.raises(ValueError, match="duplicad"):
         carregar_escola(arq)
+
+
+def test_provedor_padrao_claude():
+    escola = carregar_escola(EXEMPLO)
+    assert escola.provedor_ia == "claude"
+
+
+def test_gemini_tem_modelo_padrao_proprio(tmp_path):
+    arq = tmp_path / "e.yaml"
+    arq.write_text(
+        _yaml_minimo("  - {numero: 1, inicio: 2027-02-01, fim: 2027-04-30}") + "provedor_ia: gemini\n",
+        encoding="utf-8",
+    )
+    escola = carregar_escola(arq)
+    assert (escola.provedor_ia, escola.modelo_ia) == ("gemini", "gemini-flash-latest")
+
+
+def test_provedor_invalido_falha(tmp_path):
+    arq = tmp_path / "e.yaml"
+    arq.write_text(
+        _yaml_minimo("  - {numero: 1, inicio: 2027-02-01, fim: 2027-04-30}") + "provedor_ia: chatgpt\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="provedor_ia"):
+        carregar_escola(arq)

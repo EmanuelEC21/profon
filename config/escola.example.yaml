@@ -7,7 +7,8 @@ escola: Nome da Escola
 coordenador: Nome do Coordenador
 disciplina: Língua Portuguesa
 horario_envio: "06:00"          # hora da mensagem da manhã
-modelo_ia: claude-opus-5-5
+provedor_ia: claude              # claude ou gemini
+modelo_ia: claude-opus-5-5       # apague esta linha para usar o padrão do provedor (gemini: gemini-flash-latest)
 telegram_chat_id: 0             # o bot mostra esse número no /start
 
 bimestres:

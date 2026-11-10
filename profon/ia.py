@@ -41,6 +41,40 @@ class ClienteClaude:
         return "".join(b.text for b in resposta.content if b.type == "text").strip()
 
 
+class ClienteGemini:
+    """Cliente fino sobre o SDK google-genai (chave gratuita do Google AI Studio em GEMINI_API_KEY)."""
+
+    def __init__(self, modelo: str, sdk=None):
+        if sdk is None:
+            from google import genai
+
+            sdk = genai.Client()  # lê GEMINI_API_KEY (ou GOOGLE_API_KEY) do ambiente
+        self.sdk = sdk
+        self.modelo = modelo
+
+    def completar(self, sistema: str, mensagem: str) -> str:
+        from google.genai import types
+
+        resposta = self.sdk.models.generate_content(
+            model=self.modelo,
+            contents=mensagem,
+            config=types.GenerateContentConfig(system_instruction=sistema, max_output_tokens=16000),
+        )
+        texto = (resposta.text or "").strip()
+        if not texto:  # bloqueado pelos filtros de segurança ou resposta vazia
+            raise RecusaIA(str(getattr(resposta, "prompt_feedback", None)))
+        return texto
+
+
+def criar_cliente(provedor: str, modelo: str, sdk=None) -> ClienteIA:
+    """Escolhe o cliente pelo provedor configurado em escola.yaml (provedor_ia)."""
+    if provedor == "claude":
+        return ClienteClaude(modelo, sdk=sdk)
+    if provedor == "gemini":
+        return ClienteGemini(modelo, sdk=sdk)
+    raise ValueError(f"provedor de IA desconhecido: {provedor!r} (use claude ou gemini).")
+
+
 # --- Questionário de quadro -------------------------------------------------------------------
 
 SISTEMA_QUESTIONARIO = """Você ajuda um professor de Língua Portuguesa do Maranhão.

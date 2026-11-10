@@ -12,12 +12,23 @@
 1. **Crie o bot:** no Telegram, procure **@BotFather**, mande `/newbot`, escolha um nome (ex.: "Profon do Prof. Fulano") e um usuário terminado em `bot`. Ele te devolve um **token**.
 2. Copie `.env.example` para `.env` e preencha:
    - `TELEGRAM_TOKEN=` com o token do BotFather;
-   - `ANTHROPIC_API_KEY=` com a chave da API da Claude (console.anthropic.com).
+   - a chave da IA que você escolher (veja "Qual IA usar" abaixo): `ANTHROPIC_API_KEY=` para a Claude ou `GEMINI_API_KEY=` para o Gemini.
 3. Copie `config/escola.example.yaml` para `config/escola.yaml` e preencha os seus dados, as datas dos bimestres, os feriados e as suas turmas (e em que dias da semana você dá aula em cada uma).
 4. Rode `python -m profon`, abra o seu bot no Telegram e mande `/start`. Ele responde com o seu **chat_id**. Coloque esse número em `telegram_chat_id` no `escola.yaml` e rode de novo.
 5. Para cada ano em que você dá aula, gere o rascunho da sequência e **revise**:
    `python scripts/gerar_sequencia.py --ano 6`.
    Abra `data/sequencias/6ano.yaml` e ajuste a ordem, os títulos e as aulas. `aulas_minimas` é o mínimo de aulas se for preciso acelerar. Igual a `aulas` quer dizer que não dá para acelerar aquele conteúdo.
+
+## Qual IA usar
+
+Em `config/escola.yaml`, a linha `provedor_ia` escolhe a IA:
+
+- **`claude`** (padrão): melhor qualidade, mas é paga por uso. A chave é criada em console.anthropic.com.
+- **`gemini`**: tem uma **camada gratuita**. A chave é criada em aistudio.google.com, no botão "Get API key".
+  - **Atenção:** a assinatura do app Gemini (Google AI Pro, plano para educação) **não inclui a API**. A chave do AI Studio é separada, e a camada gratuita tem limite diário de pedidos. O Profon faz poucos pedidos por semana, então costuma caber.
+  - Na camada gratuita, o Google pode usar o conteúdo dos pedidos para melhorar os produtos dele. O Profon só manda conteúdo pedagógico (títulos e habilidades da BNCC), nunca dados de alunos.
+
+Para gerar a sequência com o Gemini: `python scripts/gerar_sequencia.py --ano 6 --provedor gemini`.
 
 ## No dia a dia
 

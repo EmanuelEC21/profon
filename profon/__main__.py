@@ -1,6 +1,6 @@
 """Inicia o Profon: python -m profon
 
-Lê .env (TELEGRAM_TOKEN, ANTHROPIC_API_KEY), config/escola.yaml, data/sequencias/*.yaml,
+Lê .env (TELEGRAM_TOKEN e ANTHROPIC_API_KEY ou GEMINI_API_KEY), config/escola.yaml, data/sequencias/*.yaml,
 data/curriculo/lp_habilidades.json e profon.db.
 """
 
@@ -37,7 +37,7 @@ def main() -> None:
     from dotenv import load_dotenv
 
     from profon.bot import criar_app
-    from profon.ia import ClienteClaude
+    from profon.ia import criar_cliente
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     load_dotenv()
@@ -47,7 +47,9 @@ def main() -> None:
     ctx, habilidades, avisos = carregar_contexto(Path("config/escola.yaml"), Path("data"), Path("profon.db"))
     for a in avisos:
         logging.warning(a)
-    app = criar_app(ctx, ClienteClaude(ctx.escola.modelo_ia), habilidades, token)
+    cliente = criar_cliente(ctx.escola.provedor_ia, ctx.escola.modelo_ia)
+    logging.info("IA: %s (%s)", ctx.escola.provedor_ia, ctx.escola.modelo_ia)
+    app = criar_app(ctx, cliente, habilidades, token)
     logging.info("Profon no ar. Envio diário às %s.", ctx.escola.horario_envio.strftime("%H:%M"))
     app.run_polling()
 

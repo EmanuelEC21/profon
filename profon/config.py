@@ -37,12 +37,16 @@ class Escola:
     bimestres: tuple[Bimestre, ...]
     dias_sem_aula: dict[date, str] = field(hash=False)
     turmas: tuple[Turma, ...]
+    provedor_ia: str = "claude"  # "claude" ou "gemini"
 
     def turma(self, id: str) -> Turma:
         for t in self.turmas:
             if t.id == id:
                 return t
         raise KeyError(f"Turma não encontrada: {id}")
+
+
+PROVEDORES = {"claude": "claude-opus-5-5", "gemini": "gemini-flash-latest"}  # provedor -> modelo padrão
 
 
 def _data(valor) -> date:
@@ -82,13 +86,18 @@ def carregar_escola(caminho: Path) -> Escola:
         ids.add(str(t["id"]))
         turmas.append(Turma(str(t["id"]), int(t["ano"]), str(t["nome"]), str(t["turno"]), dias))
 
+    provedor = str(dados.get("provedor_ia", "claude")).lower()
+    if provedor not in PROVEDORES:
+        raise ValueError(f"provedor_ia deve ser um de: {', '.join(PROVEDORES)} (veio {provedor!r}).")
+
     return Escola(
         professor=str(dados["professor"]),
         escola=str(dados["escola"]),
         coordenador=str(dados["coordenador"]),
         disciplina=str(dados["disciplina"]),
         horario_envio=_hora(dados.get("horario_envio", "06:00")),
-        modelo_ia=str(dados.get("modelo_ia", "claude-opus-5-5")),
+        modelo_ia=str(dados.get("modelo_ia") or PROVEDORES[provedor]),
+        provedor_ia=provedor,
         telegram_chat_id=int(dados["telegram_chat_id"]),
         bimestres=bimestres,
         dias_sem_aula={_data(k): str(v) for k, v in (dados.get("dias_sem_aula") or {}).items()},
