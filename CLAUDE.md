@@ -17,7 +17,9 @@ Também remaneja a fila de cada turma quando uma aula não acontece.
 | Caminho | Responsabilidade |
 |---|---|
 | `profon/config.py` | `Escola`, `Turma`, `Bimestre` e `carregar_escola(yaml)`: dados admin, calendário e grade |
-| `profon/curriculo.py` | *(a criar, Task 2)* habilidades de LP extraídas da BNCC |
+| `profon/curriculo.py` | `Habilidade`, `anos_do_codigo`, `extrair_habilidades`, `carregar_habilidades`: habilidades de LP da BNCC |
+| `scripts/extrair_bncc.py` | gera `data/curriculo/lp_habilidades.json` a partir do `BNCC.pdf` (391 habilidades) |
+| `data/curriculo/lp_habilidades.json` | habilidades extraídas (gerado, versionado) |
 | `profon/sequencia.py` | *(a criar, Task 3)* sequência de conteúdos por ano |
 | `profon/ia.py` | *(a criar, Tasks 3 e 7)* cliente da Claude e geração do questionário |
 | `profon/estado.py` | *(a criar, Task 4)* SQLite: cancelamentos, ajustes e questionários |
