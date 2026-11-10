@@ -74,9 +74,15 @@ def test_turma_duplicada_falha(tmp_path):
         carregar_escola(arq)
 
 
-def test_provedor_padrao_claude():
+def test_provedor_padrao_gemini():
     escola = carregar_escola(EXEMPLO)
-    assert escola.provedor_ia == "claude"
+    assert (escola.provedor_ia, escola.modelo_ia) == ("gemini", "gemini-flash-latest")
+
+
+def test_sem_provedor_no_yaml_usa_gemini(tmp_path):
+    arq = tmp_path / "e.yaml"
+    arq.write_text(_yaml_minimo("  - {numero: 1, inicio: 2027-02-01, fim: 2027-04-30}"), encoding="utf-8")
+    assert carregar_escola(arq).provedor_ia == "gemini"
 
 
 def test_gemini_tem_modelo_padrao_proprio(tmp_path):

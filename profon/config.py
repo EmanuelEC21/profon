@@ -37,7 +37,7 @@ class Escola:
     bimestres: tuple[Bimestre, ...]
     dias_sem_aula: dict[date, str] = field(hash=False)
     turmas: tuple[Turma, ...]
-    provedor_ia: str = "claude"  # "claude" ou "gemini"
+    provedor_ia: str = "gemini"  # "gemini" (padrão, camada gratuita) ou "claude"
 
     def turma(self, id: str) -> Turma:
         for t in self.turmas:
@@ -86,7 +86,7 @@ def carregar_escola(caminho: Path) -> Escola:
         ids.add(str(t["id"]))
         turmas.append(Turma(str(t["id"]), int(t["ano"]), str(t["nome"]), str(t["turno"]), dias))
 
-    provedor = str(dados.get("provedor_ia", "claude")).lower()
+    provedor = str(dados.get("provedor_ia", "gemini")).lower()
     if provedor not in PROVEDORES:
         raise ValueError(f"provedor_ia deve ser um de: {', '.join(PROVEDORES)} (veio {provedor!r}).")
 

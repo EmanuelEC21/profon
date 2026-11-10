@@ -1,7 +1,7 @@
 """Gera um RASCUNHO da sequência de conteúdos de um ano, para o professor revisar.
 
 Uso: python scripts/gerar_sequencia.py --ano 6 [--habilidades data/curriculo/lp_habilidades.json]
-                                        [--saida data/sequencias/6ano.yaml] [--provedor claude|gemini] [--modelo ...]
+                                        [--saida data/sequencias/6ano.yaml] [--provedor gemini|claude] [--modelo ...]
 """
 
 import argparse
@@ -35,7 +35,7 @@ def main() -> None:
     p.add_argument("--ano", type=int, required=True)
     p.add_argument("--habilidades", default="data/curriculo/lp_habilidades.json")
     p.add_argument("--saida")
-    p.add_argument("--provedor", choices=sorted(PROVEDORES), default="claude")
+    p.add_argument("--provedor", choices=sorted(PROVEDORES), default="gemini")
     p.add_argument("--modelo", help="padrão: o modelo padrão do provedor")
     a = p.parse_args()
     load_dotenv()

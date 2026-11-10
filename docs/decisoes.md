@@ -14,7 +14,7 @@ Registro do que foi decidido e por quê. Detalhes em `docs/design/2026-11-10-pro
 | Atividade de 10 questões uma vez por conteúdo (Fase 2) | 8 discursivas (2 fáceis, 4 médias, 2 difíceis) e 2 de múltipla escolha | Professor |
 | 1º e 2º ano: discursivas simples + jogos (Fase 2) | Alfabetização | Professor |
 | Revisão semanal opcional, que nunca bloqueia o envio (Fase 2) | Controle sem exigir disciplina | Professor |
-| IA trocável: `provedor_ia` claude (padrão) ou gemini | O professor já usa o Gemini, e a API dele tem uma camada gratuita | Professor |
+| IA trocável: `provedor_ia` gemini (padrão) ou claude | O Gemini tem uma camada gratuita da API. A Claude fica como opção paga, de maior qualidade | Professor |
 | Python 3.12, SQLite e API da Claude | Simples, barato e com boas bibliotecas | Claude |
 | Disciplina como parâmetro | Abre caminho para outras disciplinas | Claude |
 | Aula geminada conta como um dia | Um material por bloco | Claude |
