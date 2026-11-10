@@ -1,7 +1,0 @@
-pyproject.toml
-profon/__init__.py
-profon.egg-info/PKG-INFO
-profon.egg-info/SOURCES.txt
-profon.egg-info/dependency_links.txt
-profon.egg-info/requires.txt
-profon.egg-info/top_level.txt
