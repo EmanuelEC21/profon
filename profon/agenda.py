@@ -37,7 +37,11 @@ def datas_de_aula(escola: Escola, turma: Turma) -> list[date]:
     for b in escola.bimestres:
         d = b.inicio
         while d <= b.fim:
-            if d.weekday() in turma.dias_semana and d not in escola.dias_sem_aula:
+            if (
+                d.weekday() in turma.dias_semana
+                and d not in escola.dias_sem_aula
+                and (escola.inicio is None or d >= escola.inicio)
+            ):
                 datas.append(d)
             d += timedelta(days=1)
     return datas

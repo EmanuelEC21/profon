@@ -105,19 +105,51 @@ def test_provedor_invalido_falha(tmp_path):
         carregar_escola(arq)
 
 
-def test_turma_multisseriada_usa_ano_mais_alto(tmp_path):
+def _turma_yaml(tmp_path, linha_turma, extra=""):
     arq = tmp_path / "e.yaml"
     arq.write_text(
-        _yaml_minimo(
-            "  - {numero: 1, inicio: 2027-02-01, fim: 2027-04-30}",
-            "  - {id: M1, anos: [1, 2, 3], nome: 1º/2º/3º, turno: manhã, dias_semana: [0]}",
-        ),
+        _yaml_minimo("  - {numero: 1, inicio: 2027-02-01, fim: 2027-04-30}", linha_turma) + extra,
         encoding="utf-8",
     )
-    t = carregar_escola(arq).turma("M1")
-    assert (t.ano, t.anos) == (3, (1, 2, 3))
+    return carregar_escola(arq)
+
+
+def test_tres_anos_juntos_usa_o_do_meio(tmp_path):
+    t = _turma_yaml(tmp_path, "  - {id: M1, anos: [1, 2, 3], nome: M, turno: manhã, dias_semana: [0]}").turma("M1")
+    assert (t.ano, t.anos) == (2, (1, 2, 3))
+
+
+def test_dois_anos_juntos_nivela_por_cima(tmp_path):
+    t = _turma_yaml(tmp_path, "  - {id: M2, anos: [8, 9], nome: M, turno: manhã, dias_semana: [4]}").turma("M2")
+    assert t.ano == 9
+
+
+def test_ano_explicito_vence_a_regra(tmp_path):
+    t = _turma_yaml(tmp_path, "  - {id: M3, anos: [1, 2, 3], ano: 3, nome: M, turno: manhã, dias_semana: [0]}").turma("M3")
+    assert t.ano == 3
 
 
 def test_turma_seriada_tem_um_ano():
     t = carregar_escola(EXEMPLO).turma("6A")
     assert (t.ano, t.anos) == (6, (6,))
+
+
+def test_sequencia_e_horario_da_turma(tmp_path):
+    e = _turma_yaml(
+        tmp_path,
+        "  - {id: S1, anos: [8, 9], nome: M, turno: manhã, dias_semana: [4], horario: '07:30', sequencia: 9ano-producao}",
+    )
+    t = e.turma("S1")
+    assert (t.sequencia, t.horario) == ("9ano-producao", "07:30")
+
+
+def test_sequencia_padrao_pelo_ano():
+    assert carregar_escola(EXEMPLO).turma("6A").sequencia == "6ano"
+
+
+def test_inicio_de_uso(tmp_path):
+    from datetime import date
+
+    e = _turma_yaml(tmp_path, "", "inicio: 2027-03-01\n")
+    assert e.inicio == date(2027, 3, 1)
+    assert carregar_escola(EXEMPLO).inicio is None

@@ -139,7 +139,7 @@ def test_main_carrega_contexto(tmp_path):
 
     raiz = Path(__file__).parent.parent
     ctx, habs, avisos = carregar_contexto(raiz / "config/escola.example.yaml", raiz / "data", tmp_path / "t.db")
-    assert 6 in ctx.sequencias and "EF67LP28" in habs
+    assert "6ano" in ctx.sequencias and "EF67LP28" in habs
     # o exemplo só tem a sequência do 6º ano: as outras turmas geram aviso, o 6º não
     assert any("1º A" in a for a in avisos)
     assert not any("6ano" in a or "6º A" in a for a in avisos)

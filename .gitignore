@@ -8,3 +8,4 @@ __pycache__/
 /BNCC.pdf
 /DCTMA.pdf
 *.egg-info/
+/config/escola.yaml

@@ -32,7 +32,7 @@ def test_mensagem_longa_divide(ctx):
 
 def test_sequencia_concluida_na_mensagem(ctx):
     # 6A tem 4 aulas de conteúdo; depois das datas do fixture não há mais nada.
-    ctx.sequencias[6] = []
+    ctx.sequencias["6ano"] = []
     assert "Sequência concluída" in compor_mensagens(ctx, SEG1)[0]
 
 
@@ -47,3 +47,26 @@ def test_questionario_acompanha_o_conteudo_remanejado(ctx):
     texto = compor_mensagens(ctx, SEG2)[0]
     assert "Crônica (aula 1 de 2)" in texto
     assert "1. O que é crônica?" in texto
+
+
+def test_turma_usa_sua_propria_sequencia(ctx):
+    from dataclasses import replace
+
+    from profon.mensagem import aulas_do_dia
+    from profon.sequencia import Conteudo
+
+    t6 = ctx.escola.turma("6A")
+    t6b = replace(t6, id="6P", nome="6º prod.", sequencia="6ano-producao")
+    ctx.escola = replace(ctx.escola, turmas=ctx.escola.turmas + (t6b,))
+    ctx.sequencias["6ano-producao"] = [Conteudo("6p-x", 6, 1, "Produção de crônica", (), 2, 2)]
+    titulos = {a.turma_id: a.conteudo.titulo for a in aulas_do_dia(ctx, SEG1)}
+    assert titulos["6A"] == "Crônica" and titulos["6P"] == "Produção de crônica"
+
+
+def test_horario_aparece_e_ordena(ctx):
+    from dataclasses import replace
+
+    turmas = tuple(replace(t, horario={"6A": "10:00", "9A": "07:30"}[t.id]) for t in ctx.escola.turmas)
+    ctx.escola = replace(ctx.escola, turmas=turmas)
+    texto = compor_mensagens(ctx, SEG1)[0]
+    assert texto.index("07:30 · 9º A") < texto.index("10:00 · 6º A")

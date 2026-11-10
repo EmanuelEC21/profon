@@ -68,3 +68,11 @@ def test_aulas_dadas_nao_contam_como_necessarias(escola):
     # Em QUA2, A já foi dada (SEG1, SEG2) e só falta B (2 aulas) para 1 data: atraso de 1, sugere B.
     atraso = verificar_atraso(escola, TURMA, [A, B], set(), {}, hoje=QUA2)
     assert (atraso.aulas_necessarias, atraso.aulas_disponiveis) == (2, 1)
+
+
+def test_inicio_ignora_datas_anteriores(escola):
+    from dataclasses import replace
+
+    e = replace(escola, inicio=SEG2)
+    assert datas_de_aula(e, TURMA) == [SEG2, QUA2]
+    assert montar_agenda(e, TURMA, [A], set(), {})[0].data == SEG2

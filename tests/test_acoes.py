@@ -57,7 +57,7 @@ def test_compressao_nao_apaga_aulas_ja_dadas(ctx):
     from profon.sequencia import Conteudo
     from tests.conftest import QUA2
 
-    ctx.sequencias[6] = [Conteudo("6-x", 6, 1, "X", (), 3, 1)]
+    ctx.sequencias["6ano"] = [Conteudo("6-x", 6, 1, "X", (), 3, 1)]
     aplicar_compressao(ctx, "6A", "6-x", QUA2)  # X 1 e 2 já foram dadas (SEG1, SEG2)
     assert ctx.estado.ajustes("6A") == {"6-x": 2}
     ag = agenda_da_turma(ctx, ctx.escola.turma("6A"))

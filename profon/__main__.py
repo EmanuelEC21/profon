@@ -24,12 +24,11 @@ def carregar_contexto(config: Path, dados: Path, banco: Path) -> tuple[Contexto,
     sequencias, avisos = {}, []
     for arq in sorted((dados / "sequencias").glob("*.yaml")):
         conteudos = carregar_sequencia(arq)
-        if conteudos:
-            sequencias[conteudos[0].ano] = conteudos
+        sequencias[arq.stem] = conteudos  # nome do arquivo = Turma.sequencia
         avisos += [f"{arq.name}: {e}" for e in validar_sequencia(conteudos, habilidades)]
     for t in escola.turmas:
-        if t.ano not in sequencias:
-            avisos.append(f"Turma {t.nome}: não há data/sequencias/{t.ano}ano.yaml.")
+        if t.sequencia not in sequencias:
+            avisos.append(f"Turma {t.nome}: não há data/sequencias/{t.sequencia}.yaml.")
     return Contexto(escola, sequencias, Estado(banco)), habilidades, avisos
 
 

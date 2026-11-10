@@ -22,4 +22,4 @@ def ctx():
         dias_sem_aula={date(2027, 3, 3): "feriado"},
         turmas=(Turma("6A", 6, "6º A", "manhã", (0, 2)), Turma("9A", 9, "9º A", "tarde", (0,))),
     )
-    return Contexto(escola, {6: [A, B], 9: [C]}, Estado(":memory:"))
+    return Contexto(escola, {"6ano": [A, B], "9ano": [C]}, Estado(":memory:"))

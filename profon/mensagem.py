@@ -14,13 +14,13 @@ from profon.sequencia import Conteudo
 @dataclass
 class Contexto:
     escola: Escola
-    sequencias: dict[int, list[Conteudo]]  # chave: ano
+    sequencias: dict[str, list[Conteudo]]  # chave: nome da sequência (Turma.sequencia)
     estado: Estado
 
 
 def agenda_da_turma(ctx: Contexto, turma: Turma) -> list[AulaPlanejada]:
     return montar_agenda(
-        ctx.escola, turma, ctx.sequencias.get(turma.ano, []), ctx.estado.canceladas(turma.id), ctx.estado.ajustes(turma.id)
+        ctx.escola, turma, ctx.sequencias.get(turma.sequencia, []), ctx.estado.canceladas(turma.id), ctx.estado.ajustes(turma.id)
     )
 
 
@@ -30,7 +30,7 @@ def turmas_do_dia(ctx: Contexto, dia: date) -> list[Turma]:
 
 def aulas_do_dia(ctx: Contexto, dia: date) -> list[AulaPlanejada]:
     aulas = []
-    for t in ctx.escola.turmas:
+    for t in sorted(ctx.escola.turmas, key=lambda t: t.horario):  # sem horário: mantém a ordem do YAML
         aulas.extend(a for a in agenda_da_turma(ctx, t) if a.data == dia)
     return aulas
 
@@ -65,7 +65,8 @@ def pregerar(ctx: Contexto, cliente, habilidades: dict, inicio: date, dias: int 
 
 
 def _bloco(ctx: Contexto, aula: AulaPlanejada) -> str:
-    nome = ctx.escola.turma(aula.turma_id).nome
+    turma = ctx.escola.turma(aula.turma_id)
+    nome = f"{turma.horario} · {turma.nome}" if turma.horario else turma.nome
     if aula.conteudo is None:
         return f"📚 {nome} — Sequência concluída (aula livre/revisão)"
     c = aula.conteudo

@@ -16,12 +16,12 @@ Também remaneja a fila de cada turma quando uma aula não acontece.
 
 | Caminho | Responsabilidade |
 |---|---|
-| `profon/config.py` | `Escola`, `Turma`, `Bimestre` e `carregar_escola(yaml)`: dados admin, calendário e grade. Turma multisseriada tem `anos` e `ano` = o mais alto |
+| `profon/config.py` | `Escola` (com `inicio` opcional), `Turma` (`anos`, `horario`, `sequencia`), `Bimestre`, `ano_de_referencia` (3+ anos: o do meio; 2: o mais alto), `carregar_escola(yaml)` |
 | `profon/curriculo.py` | `Habilidade`, `anos_do_codigo`, `extrair_habilidades`, `carregar_habilidades`: habilidades de LP da BNCC |
 | `scripts/extrair_bncc.py` | gera `data/curriculo/lp_habilidades.json` a partir do `BNCC.pdf` (391 habilidades) |
 | `data/curriculo/lp_habilidades.json` | habilidades extraídas (gerado, versionado) |
 | `profon/sequencia.py` | `Conteudo`, `carregar_sequencia`, `validar_sequencia`: sequência de conteúdos por ano |
-| `data/sequencias/<N>ano.yaml` | sequência de cada ano (o `6ano.yaml` é exemplo) |
+| `data/sequencias/<nome>.yaml` | sequências; cada turma usa a do seu campo `sequencia` (padrão `<ano>ano`) |
 | `scripts/gerar_sequencia.py` | rascunho da sequência de um ano via IA, para o professor revisar |
 | `profon/ia.py` | `ClienteIA` (protocolo), `ClienteClaude` (SDK, fallback de recusa), `ClienteGemini` (google-genai), `criar_cliente(provedor, modelo)`, `RecusaIA`, `gerar_questionario` (3 a 5 perguntas) |
 | `profon/estado.py` | `Estado` (SQLite): cancelamentos, ajustes de compressão e questionários. Só eventos |

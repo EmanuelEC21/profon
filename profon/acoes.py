@@ -44,7 +44,7 @@ def atrasos(ctx: Contexto, dia: date) -> list[Atraso]:
     lista = []
     for t in ctx.escola.turmas:
         a = verificar_atraso(
-            ctx.escola, t, ctx.sequencias.get(t.ano, []), ctx.estado.canceladas(t.id), ctx.estado.ajustes(t.id), dia
+            ctx.escola, t, ctx.sequencias.get(t.sequencia, []), ctx.estado.canceladas(t.id), ctx.estado.ajustes(t.id), dia
         )
         if a is not None:
             lista.append(a)
@@ -74,7 +74,7 @@ def aplicar_compressao(ctx: Contexto, turma_id: str, conteudo_id: str, hoje: dat
     reescreveria o passado e faria a turma pular aulas.
     """
     turma = ctx.escola.turma(turma_id)
-    c = next((x for x in ctx.sequencias.get(turma.ano, []) if x.id == conteudo_id), None)
+    c = next((x for x in ctx.sequencias.get(turma.sequencia, []) if x.id == conteudo_id), None)
     if c is None:
         return "Conteúdo não encontrado."
     atual = ctx.estado.ajustes(turma_id).get(c.id, c.aulas)
