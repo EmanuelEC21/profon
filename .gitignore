@@ -1,0 +1,9 @@
+.env
+*.db
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.superpowers/
+/BNCC.pdf
+/DCTMA.pdf
