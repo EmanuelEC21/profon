@@ -199,8 +199,20 @@ async def job_pregerar(context: ContextTypes.DEFAULT_TYPE) -> None:
     falhas = await _pregerar(context, dia)
     await _enviar_atrasos(context, context.job.chat_id, dia)
     if falhas:
-        texto = "⚠️ Não consegui preparar alguns questionários da semana:\n" + "\n".join(f"• {f}" for f in falhas)
-        await context.bot.send_message(chat_id=context.job.chat_id, text=texto[:4096])
+        await context.bot.send_message(chat_id=context.job.chat_id, text=texto_pendencias(falhas))
+
+
+def texto_pendencias(falhas: list[str]) -> str:
+    """Aviso curto: quantos questionários faltam, por quê e quando o bot tenta de novo."""
+    motivos = sorted({f.rsplit(": ", 1)[-1] for f in falhas})
+    aulas = [f.rsplit(": ", 1)[0] for f in falhas]
+    lista = "\n".join(f"• {a}" for a in aulas[:8])
+    if len(aulas) > 8:
+        lista += f"\n• … e mais {len(aulas) - 8}"
+    return (
+        f"⚠️ Ainda faltam {len(falhas)} questionário(s) ({'; '.join(motivos)}).\n"
+        "Tento de novo amanhã às 5h15. Até lá, essas aulas aparecem sem o questionário.\n" + lista
+    )
 
 
 async def job_completar(context: ContextTypes.DEFAULT_TYPE) -> None:

@@ -154,3 +154,15 @@ def test_job_completar_prepara_sem_alertas(ctx):
     _rodar(bot.job_completar(c))
     assert ctx.estado.questionario("6ano", "6-a#1/2") is not None
     c.bot.send_message.assert_not_called()  # silencioso: só preenche lacunas
+
+
+def test_aviso_de_pendencias_e_curto_e_explica(ctx):
+    from tests.test_questionario import ClienteFalso, _Erro
+
+    c = _context(ctx, SEG1)
+    c.bot_data["cliente"] = ClienteFalso(_Erro(429, "PerDay " + "x" * 3000))
+    c.job = SimpleNamespace(chat_id=1)
+    _rodar(bot.job_pregerar(c))
+    [aviso] = [ch.kwargs["text"] for ch in c.bot.send_message.call_args_list if "questionário" in ch.kwargs["text"]]
+    assert len(aviso) < 600
+    assert "5h15" in aviso and "cota diária do Gemini esgotada" in aviso

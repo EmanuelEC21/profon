@@ -56,3 +56,30 @@ def test_pregerar_falha_nao_explode(ctx):
     falhas = pregerar(ctx, ClienteFalso(RuntimeError("API fora")), {}, SEG1, dias=1)
     assert len(falhas) == 2
     assert "6º A" in falhas[0]
+
+
+class _Erro(Exception):
+    def __init__(self, code, texto=""):
+        self.code, self.texto = code, texto
+
+    def __str__(self):
+        return self.texto
+
+
+@pytest.mark.parametrize(
+    "erro,esperado",
+    [
+        (_Erro(429, "... GenerateRequestsPerDayPerProjectPerModel-FreeTier ..."), "cota diária do Gemini esgotada"),
+        (_Erro(429, "per minute"), "limite de pedidos por minuto"),
+        (_Erro(503, "high demand"), "Gemini sobrecarregado"),
+    ],
+)
+def test_motivo_em_portugues(erro, esperado):
+    from profon.mensagem import motivo_falha
+
+    assert motivo_falha(erro) == esperado
+
+
+def test_falha_da_pregeracao_vem_curta(ctx):
+    falhas = pregerar(ctx, ClienteFalso(_Erro(429, "x" * 3000 + "PerDay")), {}, SEG1, dias=1)
+    assert falhas[0] == "6º A 01/03 (Crônica): cota diária do Gemini esgotada"

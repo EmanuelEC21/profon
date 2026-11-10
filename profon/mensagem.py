@@ -50,6 +50,22 @@ def chave_aula(aula: AulaPlanejada) -> str:
     return f"{aula.conteudo.id}#{aula.numero}/{aula.total}"
 
 
+def motivo_falha(e: Exception) -> str:
+    """Traduz o erro da IA para uma frase curta, sem detalhes técnicos."""
+    texto, codigo = str(e), getattr(e, "code", None)
+    if "PerDay" in texto:
+        return "cota diária do Gemini esgotada"
+    if codigo == 429:
+        return "limite de pedidos por minuto"
+    if codigo in (500, 503):
+        return "Gemini sobrecarregado"
+    if type(e).__name__ == "RecusaIA":
+        return "a IA recusou o pedido"
+    if isinstance(e, ValueError):
+        return "a IA respondeu fora do formato"
+    return texto.splitlines()[0][:80] if texto else type(e).__name__
+
+
 def pregerar(ctx: Contexto, cliente, habilidades: dict, inicio: date, dias: int = 7) -> list[str]:
     """Gera e salva os questionários do período. Nunca levanta exceção: devolve as falhas em texto."""
     from profon.ia import gerar_questionario
@@ -65,7 +81,7 @@ def pregerar(ctx: Contexto, cliente, habilidades: dict, inicio: date, dias: int 
                 perguntas = gerar_questionario(cliente, aula, turma.ano, habilidades)
                 ctx.estado.salvar_questionario(_dono(ctx, aula), chave_aula(aula), perguntas)
             except Exception as e:  # a pré-geração nunca pode derrubar o bot
-                falhas.append(f"{turma.nome} {dia:%d/%m} ({aula.conteudo.titulo}): {e}")
+                falhas.append(f"{turma.nome} {dia:%d/%m} ({aula.conteudo.titulo}): {motivo_falha(e)}")
     return falhas
 
 
