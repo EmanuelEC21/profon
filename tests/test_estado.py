@@ -22,9 +22,10 @@ def test_desfazer():
 
 def test_ajustes():
     e = Estado(":memory:")
-    e.definir_ajuste("6-cronica", 4)
-    e.definir_ajuste("6-cronica", 3)
-    assert e.ajustes() == {"6-cronica": 3}
+    e.definir_ajuste("6A", "6-cronica", 4)
+    e.definir_ajuste("6A", "6-cronica", 3)
+    assert e.ajustes("6A") == {"6-cronica": 3}
+    assert e.ajustes("6B") == {}
 
 
 def test_questionario_roundtrip():

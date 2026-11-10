@@ -15,8 +15,17 @@ def _update(chat_id=1, data=None, texto="/x"):
 
 
 def _context(ctx, hoje, args=()):
-    dados = {"ctx": ctx, "cliente": None, "habilidades": {}, "hoje": lambda: hoje, "pregerar": False}
-    return SimpleNamespace(bot_data=dados, args=list(args), bot=SimpleNamespace(send_message=AsyncMock()))
+    dados = {"ctx": ctx, "cliente": None, "habilidades": {}, "hoje": lambda: hoje}
+    tarefas = []
+
+    def create_task(coro, **kw):
+        tarefas.append(coro)
+        coro.close()  # não roda: só registra que foi agendada sem bloquear o handler
+
+    return SimpleNamespace(
+        bot_data=dados, args=list(args), bot=SimpleNamespace(send_message=AsyncMock()),
+        application=SimpleNamespace(create_task=create_task), tarefas=tarefas,
+    )
 
 
 def _rodar(coro):
@@ -66,6 +75,9 @@ def test_callback_sim_cancela(ctx):
     # 6A ficou atrasada: chega um alerta com botão de acelerar
     alertas = [ch for ch in c.bot.send_message.call_args_list if "atrasando" in ch.kwargs["text"]]
     assert alertas
+    botoes = [b.callback_data for linha in alertas[0].kwargs["reply_markup"].inline_keyboard for b in linha]
+    assert botoes == ["acel:6A:6-b"]
+    assert len(c.tarefas) == 1  # pré-geração agendada, não aguardada
 
 
 def test_callback_so_uma_turma(ctx):
@@ -82,9 +94,11 @@ def test_callback_nao_mantem(ctx):
 
 
 def test_callback_acelerar(ctx):
-    up = _update(data="acel:6-b")
-    _rodar(bot.callback(up, _context(ctx, SEG1)))
-    assert ctx.estado.ajustes() == {"6-b": 1}
+    up = _update(data="acel:6A:6-b")
+    c = _context(ctx, SEG1)
+    _rodar(bot.callback(up, c))
+    assert ctx.estado.ajustes("6A") == {"6-b": 1}
+    assert len(c.tarefas) == 1  # questionários regerados em segundo plano
 
 
 def test_envio_diario(ctx):
@@ -103,7 +117,19 @@ def test_envio_diario_sem_aula_nao_envia(ctx):
 
 def test_criar_app_agenda_jobs(ctx):
     app = bot.criar_app(ctx, None, {}, "123456:TESTE")
-    assert {j.name for j in app.job_queue.jobs()} == {"envio", "pregerar"}
+    assert {j.name for j in app.job_queue.jobs()} == {"envio", "pregerar", "pregerar-inicial"}
+
+
+def test_job_semanal_avisa_atraso_sem_cancelamento(ctx):
+    from tests.test_questionario import QUATRO, ClienteFalso
+
+    c = _context(ctx, SEG1)
+    c.bot_data["cliente"] = ClienteFalso(QUATRO)
+    c.job = SimpleNamespace(chat_id=1)
+    _rodar(bot.job_pregerar(c))  # 6A precisa de 4 aulas e o bimestre só tem 3
+    textos = [ch.kwargs["text"] for ch in c.bot.send_message.call_args_list]
+    assert any("6º A está atrasando" in t for t in textos)
+    assert ctx.estado.questionario("6A", "6-a#1/2") is not None  # e preparou a partir de hoje
 
 
 def test_main_carrega_contexto(tmp_path):

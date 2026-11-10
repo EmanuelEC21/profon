@@ -20,7 +20,7 @@ class Contexto:
 
 def agenda_da_turma(ctx: Contexto, turma: Turma) -> list[AulaPlanejada]:
     return montar_agenda(
-        ctx.escola, turma, ctx.sequencias.get(turma.ano, []), ctx.estado.canceladas(turma.id), ctx.estado.ajustes()
+        ctx.escola, turma, ctx.sequencias.get(turma.ano, []), ctx.estado.canceladas(turma.id), ctx.estado.ajustes(turma.id)
     )
 
 

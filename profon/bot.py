@@ -126,14 +126,27 @@ async def cmd_naoterminou(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 # --- botões -----------------------------------------------------------------------------------
 
 
-async def _pregerar_em_segundo_plano(context, inicio: date) -> None:
-    if not context.bot_data.get("pregerar", True):
-        return
+async def _pregerar(context, inicio: date) -> list[str]:
     falhas = await asyncio.to_thread(
         pregerar, _ctx(context), context.bot_data["cliente"], context.bot_data["habilidades"], inicio
     )
     for f in falhas:
         log.warning("pré-geração: %s", f)
+    return falhas
+
+
+def _pregerar_em_segundo_plano(context, inicio: date) -> None:
+    """Agenda a pré-geração sem aguardar: o bot continua respondendo enquanto a IA trabalha."""
+    context.application.create_task(_pregerar(context, inicio))
+
+
+async def _enviar_atrasos(context, chat: int, dia: date) -> None:
+    ctx = _ctx(context)
+    for a in atrasos(ctx, dia):
+        botoes = [[(f"Acelerar {c.titulo}", f"acel:{a.turma_id}:{c.id}")] for c in a.sugestoes]
+        await context.bot.send_message(
+            chat_id=chat, text=texto_atraso(ctx, a), reply_markup=_teclado(*botoes) if botoes else None
+        )
 
 
 async def callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -156,12 +169,8 @@ async def callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         turmas = [partes[3]] if partes[3] else None
         motivo = partes[4] if len(partes) > 4 and partes[4] else "sem aula"
         await q.edit_message_text("\n\n".join(confirmar_sem_aula(ctx, dia, motivo, turmas=turmas)))
-        for a in atrasos(ctx, dia):
-            botoes = [[(f"Acelerar {c.titulo}", f"acel:{c.id}")] for c in a.sugestoes]
-            await context.bot.send_message(
-                chat_id=chat, text=texto_atraso(ctx, a), reply_markup=_teclado(*botoes) if botoes else None
-            )
-        await _pregerar_em_segundo_plano(context, dia + timedelta(days=1))
+        await _enviar_atrasos(context, chat, dia)
+        _pregerar_em_segundo_plano(context, dia + timedelta(days=1))
     elif partes[0] == "nt":
         dia, turma = date.fromisoformat(partes[1]), partes[2]
         nome = ctx.escola.turma(turma).nome
@@ -170,7 +179,8 @@ async def callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             reply_markup=_botoes_confirmacao(dia, turma=turma, motivo="não terminou"),
         )
     elif partes[0] == "acel":
-        await q.edit_message_text(aplicar_compressao(ctx, partes[1]))
+        await q.edit_message_text(aplicar_compressao(ctx, partes[1], partes[2], _hoje(context)))
+        _pregerar_em_segundo_plano(context, _hoje(context))  # a compressão muda as aulas seguintes
 
 
 # --- jobs agendados ---------------------------------------------------------------------------
@@ -184,10 +194,10 @@ async def job_envio(context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def job_pregerar(context: ContextTypes.DEFAULT_TYPE) -> None:
-    falhas = await asyncio.to_thread(
-        pregerar, _ctx(context), context.bot_data["cliente"], context.bot_data["habilidades"],
-        _hoje(context) + timedelta(days=1),
-    )
+    """Domingo à noite e ao ligar o bot: prepara os 7 próximos dias e verifica atrasos."""
+    dia = _hoje(context)
+    falhas = await _pregerar(context, dia)
+    await _enviar_atrasos(context, context.job.chat_id, dia)
     if falhas:
         texto = "⚠️ Não consegui preparar alguns questionários da semana:\n" + "\n".join(f"• {f}" for f in falhas)
         await context.bot.send_message(chat_id=context.job.chat_id, text=texto[:4096])
@@ -209,4 +219,5 @@ def criar_app(ctx: Contexto, cliente, habilidades: dict, token: str) -> Applicat
     # Dias no PTB: 0 = domingo ... 6 = sábado
     app.job_queue.run_daily(job_envio, time=hora, days=(1, 2, 3, 4, 5), chat_id=chat, name="envio")
     app.job_queue.run_daily(job_pregerar, time=time(20, 0, tzinfo=FUSO), days=(0,), chat_id=chat, name="pregerar")
+    app.job_queue.run_once(job_pregerar, when=10, chat_id=chat, name="pregerar-inicial")  # recupera ao ligar
     return app

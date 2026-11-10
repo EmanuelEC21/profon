@@ -43,10 +43,29 @@ def test_alerta_de_atraso_aparece(ctx):
 
 
 def test_aplicar_compressao(ctx):
-    texto = aplicar_compressao(ctx, "6-b")
-    assert ctx.estado.ajustes() == {"6-b": 1}
+    texto = aplicar_compressao(ctx, "6A", "6-b", SEG1)
+    assert ctx.estado.ajustes("6A") == {"6-b": 1}
     assert "Pontuação" in texto and "2" in texto and "1" in texto
 
 
 def test_compressao_inexistente(ctx):
-    assert "não encontrado" in aplicar_compressao(ctx, "zzz")
+    assert "não encontrado" in aplicar_compressao(ctx, "6A", "zzz", SEG1)
+
+
+def test_compressao_nao_apaga_aulas_ja_dadas(ctx):
+    from profon.mensagem import agenda_da_turma
+    from profon.sequencia import Conteudo
+    from tests.conftest import QUA2
+
+    ctx.sequencias[6] = [Conteudo("6-x", 6, 1, "X", (), 3, 1)]
+    aplicar_compressao(ctx, "6A", "6-x", QUA2)  # X 1 e 2 já foram dadas (SEG1, SEG2)
+    assert ctx.estado.ajustes("6A") == {"6-x": 2}
+    ag = agenda_da_turma(ctx, ctx.escola.turma("6A"))
+    assert [(a.numero, a.total) for a in ag[:2]] == [(1, 2), (2, 2)]
+
+
+def test_compressao_de_conteudo_concluido_recusa(ctx):
+    from tests.conftest import QUA2
+
+    assert "já" in aplicar_compressao(ctx, "6A", "6-a", QUA2)  # Crônica já terminou
+    assert ctx.estado.ajustes("6A") == {}

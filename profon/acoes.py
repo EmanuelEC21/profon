@@ -44,7 +44,7 @@ def atrasos(ctx: Contexto, dia: date) -> list[Atraso]:
     lista = []
     for t in ctx.escola.turmas:
         a = verificar_atraso(
-            ctx.escola, t, ctx.sequencias.get(t.ano, []), ctx.estado.canceladas(t.id), ctx.estado.ajustes(), dia
+            ctx.escola, t, ctx.sequencias.get(t.ano, []), ctx.estado.canceladas(t.id), ctx.estado.ajustes(t.id), dia
         )
         if a is not None:
             lista.append(a)
@@ -57,7 +57,7 @@ def texto_atraso(ctx: Contexto, atraso: Atraso) -> str:
         f"⚠️ {nome} está atrasando no {atraso.bimestre}º bimestre: faltam {atraso.aulas_necessarias} aulas "
         f"de conteúdo e restam {atraso.aulas_disponiveis} aulas até o fim do bimestre."
     )
-    ajustes = ctx.estado.ajustes()
+    ajustes = ctx.estado.ajustes(atraso.turma_id)
     if atraso.sugestoes:
         texto += "\nSugestões para acelerar:"
         for c in atraso.sugestoes:
@@ -67,11 +67,22 @@ def texto_atraso(ctx: Contexto, atraso: Atraso) -> str:
     return texto
 
 
-def aplicar_compressao(ctx: Contexto, conteudo_id: str) -> str:
-    for conteudos in ctx.sequencias.values():
-        for c in conteudos:
-            if c.id == conteudo_id:
-                antes = ctx.estado.ajustes().get(c.id, c.aulas)
-                ctx.estado.definir_ajuste(c.id, c.aulas_minimas)
-                return f"✅ {c.titulo} acelerado: de {antes} para {c.aulas_minimas} aulas."
-    return "Conteúdo não encontrado."
+def aplicar_compressao(ctx: Contexto, turma_id: str, conteudo_id: str, hoje: date) -> str:
+    """Reduz as aulas de um conteúdo numa turma, sem nunca ficar abaixo das aulas já dadas.
+
+    Como a agenda é recalculada desde o início do ano, reduzir abaixo do que já foi dado
+    reescreveria o passado e faria a turma pular aulas.
+    """
+    turma = ctx.escola.turma(turma_id)
+    c = next((x for x in ctx.sequencias.get(turma.ano, []) if x.id == conteudo_id), None)
+    if c is None:
+        return "Conteúdo não encontrado."
+    atual = ctx.estado.ajustes(turma_id).get(c.id, c.aulas)
+    dadas = sum(1 for a in agenda_da_turma(ctx, turma) if a.data < hoje and a.conteudo and a.conteudo.id == c.id)
+    if dadas >= atual:
+        return f"{c.titulo} já foi dado por completo no {turma.nome}; não há o que acelerar."
+    novo = max(c.aulas_minimas, dadas)
+    if novo >= atual:
+        return f"{c.titulo} no {turma.nome} já está no mínimo de aulas ({atual})."
+    ctx.estado.definir_ajuste(turma_id, c.id, novo)
+    return f"✅ {c.titulo} acelerado no {turma.nome}: de {atual} para {novo} aulas."

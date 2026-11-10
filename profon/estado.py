@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS cancelamentos (
     turma_id TEXT NOT NULL, data TEXT NOT NULL, motivo TEXT NOT NULL,
     PRIMARY KEY (turma_id, data));
 CREATE TABLE IF NOT EXISTS ajustes (
-    conteudo_id TEXT PRIMARY KEY, aulas INTEGER NOT NULL);
+    turma_id TEXT NOT NULL, conteudo_id TEXT NOT NULL, aulas INTEGER NOT NULL,
+    PRIMARY KEY (turma_id, conteudo_id));
 CREATE TABLE IF NOT EXISTS questionarios (
     turma_id TEXT NOT NULL, chave TEXT NOT NULL, perguntas_json TEXT NOT NULL,
     PRIMARY KEY (turma_id, chave));
@@ -45,12 +46,13 @@ class Estado:
         with self._db:
             self._db.execute("DELETE FROM cancelamentos WHERE turma_id = ? AND data = ?", (turma_id, data.isoformat()))
 
-    def definir_ajuste(self, conteudo_id: str, aulas: int) -> None:
+    def definir_ajuste(self, turma_id: str, conteudo_id: str, aulas: int) -> None:
+        """Compressão vale só para a turma informada (outras turmas do mesmo ano não mudam)."""
         with self._db:
-            self._db.execute("INSERT OR REPLACE INTO ajustes VALUES (?, ?)", (conteudo_id, aulas))
+            self._db.execute("INSERT OR REPLACE INTO ajustes VALUES (?, ?, ?)", (turma_id, conteudo_id, aulas))
 
-    def ajustes(self) -> dict[str, int]:
-        return dict(self._db.execute("SELECT conteudo_id, aulas FROM ajustes"))
+    def ajustes(self, turma_id: str) -> dict[str, int]:
+        return dict(self._db.execute("SELECT conteudo_id, aulas FROM ajustes WHERE turma_id = ?", (turma_id,)))
 
     def salvar_questionario(self, turma_id: str, chave: str, perguntas: list[str]) -> None:
         """`chave` identifica a aula do conteúdo (veja mensagem.chave_aula), não a data: assim o
