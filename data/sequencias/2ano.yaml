@@ -1,0 +1,5 @@
+# Novembro/2026 — 2º ano (turmas G2 e G123). Campo da vida cotidiana.
+ano: 2
+conteudos:
+  - {id: 2-bilhete-carta, bimestre: 4, titulo: Bilhete e carta, habilidades: [EF02LP13, EF02LP16], aulas: 1, aulas_minimas: 1}
+  - {id: 2-cartaz-folheto, bimestre: 4, titulo: Cartaz e folheto, habilidades: [EF12LP04, EF02LP18], aulas: 1, aulas_minimas: 1}

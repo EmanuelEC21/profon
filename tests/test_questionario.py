@@ -46,7 +46,7 @@ def test_pregerar_salva_e_pula_existentes(ctx):
     cliente = ClienteFalso(QUATRO)
     falhas = pregerar(ctx, cliente, {}, SEG1, dias=1)
     assert falhas == []
-    assert ctx.estado.questionario("6A", "6-a#1/2") is not None
+    assert ctx.estado.questionario("6ano", "6-a#1/2") is not None
     n = len(cliente.chamadas)
     pregerar(ctx, cliente, {}, SEG1, dias=1)
     assert len(cliente.chamadas) == n

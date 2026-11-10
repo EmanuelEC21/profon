@@ -1,0 +1,5 @@
+# Novembro/2026 — 3º ano (turma G3). Gêneros epistolares e diário.
+ano: 3
+conteudos:
+  - {id: 3-carta-pessoal, bimestre: 4, titulo: Carta pessoal, habilidades: [EF03LP12, EF03LP17], aulas: 2, aulas_minimas: 1}
+  - {id: 3-diario, bimestre: 4, titulo: Diário, habilidades: [EF03LP13, EF03LP17], aulas: 2, aulas_minimas: 1}

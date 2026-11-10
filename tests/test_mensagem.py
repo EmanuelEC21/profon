@@ -9,7 +9,7 @@ def test_sem_aulas_sem_mensagem(ctx):
 
 
 def test_mensagem_com_questionario(ctx):
-    ctx.estado.salvar_questionario("6A", "6-a#1/2", ["O que é crônica?", "Cite um cronista."])
+    ctx.estado.salvar_questionario("6ano", "6-a#1/2", ["O que é crônica?", "Cite um cronista."])
     msgs = compor_mensagens(ctx, SEG1)
     assert len(msgs) == 1
     texto = msgs[0]
@@ -23,8 +23,8 @@ def test_mensagem_sem_questionario(ctx):
 
 
 def test_mensagem_longa_divide(ctx):
-    ctx.estado.salvar_questionario("6A", "6-a#1/2", ["x" * 3000])
-    ctx.estado.salvar_questionario("9A", "9-c#1/3", ["y" * 3000])
+    ctx.estado.salvar_questionario("6ano", "6-a#1/2", ["x" * 3000])
+    ctx.estado.salvar_questionario("9ano", "9-c#1/3", ["y" * 3000])
     msgs = compor_mensagens(ctx, SEG1)
     assert len(msgs) == 3  # cabeçalho + uma por turma
     assert all(len(m) <= 4096 for m in msgs)
@@ -70,3 +70,17 @@ def test_horario_aparece_e_ordena(ctx):
     ctx.escola = replace(ctx.escola, turmas=turmas)
     texto = compor_mensagens(ctx, SEG1)[0]
     assert texto.index("07:30 · 9º A") < texto.index("10:00 · 6º A")
+
+
+def test_turmas_da_mesma_sequencia_compartilham_questionario(ctx):
+    from dataclasses import replace
+
+    from profon.mensagem import pregerar
+    from tests.test_questionario import QUATRO, ClienteFalso
+
+    t6b = replace(ctx.escola.turma("6A"), id="6B", nome="6º B")
+    ctx.escola = replace(ctx.escola, turmas=ctx.escola.turmas + (t6b,))
+    cliente = ClienteFalso(QUATRO)
+    pregerar(ctx, cliente, {}, SEG1, dias=1)
+    assert len(cliente.chamadas) == 2  # 6A e 6B (mesma sequência) = 1 pedido; 9A = 1 pedido
+    assert "1. O que é crônica?" in compor_mensagens(ctx, SEG1)[0].split("6º B")[1]

@@ -1,0 +1,5 @@
+# Novembro/2026 — sexta 08:30, 3º/4º/5º juntos (o do meio: 4º). Foco em produção de texto.
+ano: 4
+conteudos:
+  - {id: 4p-noticia-escola, bimestre: 4, titulo: "Produção: notícia para o jornal da escola", habilidades: [EF04LP16, EF15LP05], aulas: 1, aulas_minimas: 1}
+  - {id: 4p-revisao-noticia, bimestre: 4, titulo: Revisão e reescrita da notícia, habilidades: [EF15LP06, EF04LP16], aulas: 1, aulas_minimas: 1}

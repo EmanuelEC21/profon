@@ -1,0 +1,5 @@
+# Novembro/2026 — 8º ano (turma G8). Divulgação científica.
+ano: 8
+conteudos:
+  - {id: 8-divulgacao-cientifica, bimestre: 4, titulo: Texto de divulgação científica, habilidades: [EF69LP29, EF69LP42], aulas: 2, aulas_minimas: 1}
+  - {id: 8-seminario, bimestre: 4, titulo: Seminário, habilidades: [EF69LP35, EF69LP40], aulas: 1, aulas_minimas: 1}

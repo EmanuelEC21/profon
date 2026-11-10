@@ -56,7 +56,7 @@ class Escola:
         raise KeyError(f"Turma não encontrada: {id}")
 
 
-PROVEDORES = {"claude": "claude-opus-5-5", "gemini": "gemini-flash-latest"}  # provedor -> modelo padrão
+PROVEDORES = {"claude": "claude-opus-5-5", "gemini": "gemini-3.8-flash"}  # provedor -> modelo padrão
 
 
 def ano_de_referencia(anos: tuple[int, ...]) -> int:

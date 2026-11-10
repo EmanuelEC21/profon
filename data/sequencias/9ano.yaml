@@ -1,0 +1,5 @@
+# Novembro/2026 — 9º ano (turma G9). Argumentação e debate.
+ano: 9
+conteudos:
+  - {id: 9-tese-argumentos, bimestre: 4, titulo: "Texto argumentativo: tese e argumentos", habilidades: [EF89LP14, EF69LP18], aulas: 1, aulas_minimas: 1}
+  - {id: 9-debate-regrado, bimestre: 4, titulo: Debate regrado, habilidades: [EF89LP12, EF89LP15], aulas: 2, aulas_minimas: 1}

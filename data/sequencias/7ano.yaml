@@ -1,0 +1,6 @@
+# Novembro/2026 — 7º ano (turma G7). Campo da vida pública: direitos e reclamação.
+ano: 7
+conteudos:
+  - {id: 7-canais-reclamacao, bimestre: 4, titulo: Direitos e canais de reclamação, habilidades: [EF67LP16, EF67LP19], aulas: 1, aulas_minimas: 1}
+  - {id: 7-carta-reclamacao, bimestre: 4, titulo: Carta de reclamação e de solicitação, habilidades: [EF67LP17, EF67LP18], aulas: 2, aulas_minimas: 1}
+  - {id: 7-producao-carta, bimestre: 4, titulo: Produção de carta de reclamação, habilidades: [EF67LP19, EF67LP17], aulas: 1, aulas_minimas: 1}

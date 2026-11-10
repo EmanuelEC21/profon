@@ -75,3 +75,75 @@ def test_criar_cliente_por_provedor():
     assert isinstance(criar_cliente("claude", "claude-opus-5-5", sdk=sdk), ClienteClaude)
     with pytest.raises(ValueError, match="provedor"):
         criar_cliente("chatgpt", "x", sdk=sdk)
+
+
+class _ErroGemini(Exception):
+    def __init__(self, code):
+        self.code = code
+
+
+class _ModelosComFalha:
+    def __init__(self, falham: dict):
+        self.falham = falham  # modelo -> código de erro
+        self.tentados = []
+
+    def generate_content(self, **kwargs):
+        self.tentados.append(kwargs["model"])
+        if kwargs["model"] in self.falham:
+            raise _ErroGemini(self.falham[kwargs["model"]])
+        return SimpleNamespace(text="ok")
+
+
+def test_gemini_usa_reserva_quando_sobrecarregado():
+    modelos = _ModelosComFalha({"gemini-3.8-flash": 503})
+    cli = ClienteGemini("gemini-3.8-flash", sdk=SimpleNamespace(models=modelos), reservas=("gemini-3.5-flash",))
+    assert cli.completar("s", "m") == "ok"
+    assert modelos.tentados == ["gemini-3.8-flash", "gemini-3.5-flash"]
+
+
+def test_gemini_erro_de_pedido_nao_tenta_reserva():
+    modelos = _ModelosComFalha({"gemini-3.8-flash": 400})
+    cli = ClienteGemini("gemini-3.8-flash", sdk=SimpleNamespace(models=modelos), reservas=("gemini-3.5-flash",))
+    with pytest.raises(_ErroGemini):
+        cli.completar("s", "m")
+    assert modelos.tentados == ["gemini-3.8-flash"]
+
+
+class _Relogio:
+    def __init__(self):
+        self.agora = 0.0
+        self.esperas = []
+
+    def __call__(self):
+        return self.agora
+
+    def dormir(self, s):
+        self.esperas.append(s)
+        self.agora += s
+
+
+def test_gemini_respeita_intervalo_entre_pedidos():
+    rel = _Relogio()
+    cli = ClienteGemini("m", sdk=SimpleNamespace(models=_ModelosGemini("ok")), reservas=(),
+                        intervalo=12.0, relogio=rel, dormir=rel.dormir)
+    cli.completar("s", "m")
+    cli.completar("s", "m")
+    assert rel.esperas == [12.0]
+
+
+def test_gemini_sobrecarregado_espera_e_tenta_de_novo():
+    rel = _Relogio()
+
+    class Modelos:
+        n = 0
+
+        def generate_content(self, **kw):
+            Modelos.n += 1
+            if Modelos.n <= 2:  # principal e reserva falham na 1ª rodada
+                raise _ErroGemini(503)
+            return SimpleNamespace(text="ok")
+
+    cli = ClienteGemini("a", sdk=SimpleNamespace(models=Modelos()), reservas=("b",),
+                        intervalo=0, espera_sobrecarga=30.0, relogio=rel, dormir=rel.dormir)
+    assert cli.completar("s", "m") == "ok"
+    assert 30.0 in rel.esperas

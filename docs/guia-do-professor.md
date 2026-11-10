@@ -47,3 +47,12 @@ Nada muda sem o seu ✅.
 - **Mexer na sequência (`data/sequencias/*.yaml`) no meio do ano** muda a agenda desde o começo do ano, porque o Profon recalcula a fila a partir das datas. Se precisar trocar algo, mude **apenas conteúdos que ainda não foram dados**, e sem mudar a ordem nem as aulas dos que já foram.
 - **Acelerar** vale só para a turma do aviso e nunca apaga aulas já dadas. Se o conteúdo já começou, ele só corta as aulas que ainda faltam.
 - Ao ligar o bot, ele prepara os questionários da semana e verifica atrasos. No domingo à noite faz isso de novo.
+
+## Planejamento mensal (PDF para a plataforma)
+
+1. O conteúdo do mês fica em `data/planejamentos/AAAA-MM.yaml` (ex.: `2026-11.yaml`), com os 7 campos do modelo do NACE para cada ano.
+2. Gere os arquivos (precisa do Word instalado):
+   `python scripts/gerar_planejamento.py data/planejamentos/2026-11.yaml`
+3. Os arquivos saem em `planejamentos/9 Novembro/NOV - N ANO - LP.pdf` (e `.docx`). O PDF também é copiado para `planejamentos/Por Ano/N ANO/`.
+
+O documento usa como base o planejamento do mesmo ano no mês anterior, então mantém o seu nome, a coordenação, as referências e a formatação.

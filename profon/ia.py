@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import time
 from typing import Protocol
 
 
@@ -44,22 +45,55 @@ class ClienteClaude:
 class ClienteGemini:
     """Cliente fino sobre o SDK google-genai (chave gratuita do Google AI Studio em GEMINI_API_KEY)."""
 
-    def __init__(self, modelo: str, sdk=None):
+    # Erros passageiros (sobrecarga, limite por minuto, falha do servidor): tenta o modelo reserva.
+    _PASSAGEIROS = {429, 500, 503}
+
+    def __init__(
+        self,
+        modelo: str,
+        sdk=None,
+        reservas: tuple[str, ...] = ("gemini-3.5-flash",),
+        intervalo: float = 13.0,  # camada gratuita: ~5 pedidos por minuto
+        espera_sobrecarga: float = 30.0,
+        rodadas: int = 3,
+        relogio=time.monotonic,
+        dormir=time.sleep,
+    ):
         if sdk is None:
             from google import genai
 
             sdk = genai.Client()  # lê GEMINI_API_KEY (ou GOOGLE_API_KEY) do ambiente
         self.sdk = sdk
-        self.modelo = modelo
+        self.modelos = [modelo, *(r for r in reservas if r != modelo)]
+        self.intervalo, self.espera_sobrecarga, self.rodadas = intervalo, espera_sobrecarga, rodadas
+        self._relogio, self._dormir = relogio, dormir
+        self._ultimo: float | None = None
+
+    def _respeitar_intervalo(self) -> None:
+        if self._ultimo is not None:
+            falta = self.intervalo - (self._relogio() - self._ultimo)
+            if falta > 0:
+                self._dormir(falta)
+        self._ultimo = self._relogio()
+
+    def _gerar(self, mensagem: str, config):
+        """Tenta o modelo principal e as reservas; em sobrecarga, espera e faz nova rodada."""
+        for rodada in range(self.rodadas):
+            for i, modelo in enumerate(self.modelos):
+                try:
+                    return self.sdk.models.generate_content(model=modelo, contents=mensagem, config=config)
+                except Exception as e:
+                    ultima_tentativa = rodada == self.rodadas - 1 and i == len(self.modelos) - 1
+                    if getattr(e, "code", None) not in self._PASSAGEIROS or ultima_tentativa:
+                        raise
+            self._dormir(self.espera_sobrecarga)
 
     def completar(self, sistema: str, mensagem: str) -> str:
         from google.genai import types
 
-        resposta = self.sdk.models.generate_content(
-            model=self.modelo,
-            contents=mensagem,
-            config=types.GenerateContentConfig(system_instruction=sistema, max_output_tokens=16000),
-        )
+        self._respeitar_intervalo()
+        config = types.GenerateContentConfig(system_instruction=sistema, max_output_tokens=16000)
+        resposta = self._gerar(mensagem, config)
         texto = (resposta.text or "").strip()
         if not texto:  # bloqueado pelos filtros de segurança ou resposta vazia
             raise RecusaIA(str(getattr(resposta, "prompt_feedback", None)))

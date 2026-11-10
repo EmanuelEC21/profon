@@ -40,6 +40,11 @@ def aulas_do_dia(ctx: Contexto, dia: date) -> list[AulaPlanejada]:
 LIMITE_TELEGRAM = 4096
 
 
+def _dono(ctx: Contexto, aula: AulaPlanejada) -> str:
+    """Questionários são guardados por sequência: turmas que seguem a mesma sequência compartilham."""
+    return ctx.escola.turma(aula.turma_id).sequencia
+
+
 def chave_aula(aula: AulaPlanejada) -> str:
     """Identifica a aula pelo conteúdo, não pela data (ex.: "6-cronica#2/6")."""
     return f"{aula.conteudo.id}#{aula.numero}/{aula.total}"
@@ -53,12 +58,12 @@ def pregerar(ctx: Contexto, cliente, habilidades: dict, inicio: date, dias: int 
     for i in range(dias):
         dia = inicio + timedelta(days=i)
         for aula in aulas_do_dia(ctx, dia):
-            if aula.conteudo is None or ctx.estado.questionario(aula.turma_id, chave_aula(aula)) is not None:
+            if aula.conteudo is None or ctx.estado.questionario(_dono(ctx, aula), chave_aula(aula)) is not None:
                 continue
             turma = ctx.escola.turma(aula.turma_id)
             try:
                 perguntas = gerar_questionario(cliente, aula, turma.ano, habilidades)
-                ctx.estado.salvar_questionario(aula.turma_id, chave_aula(aula), perguntas)
+                ctx.estado.salvar_questionario(_dono(ctx, aula), chave_aula(aula), perguntas)
             except Exception as e:  # a pré-geração nunca pode derrubar o bot
                 falhas.append(f"{turma.nome} {dia:%d/%m} ({aula.conteudo.titulo}): {e}")
     return falhas
@@ -72,7 +77,7 @@ def _bloco(ctx: Contexto, aula: AulaPlanejada) -> str:
     c = aula.conteudo
     codigos = f" · {', '.join(c.habilidades)}" if c.habilidades else ""
     linhas = [f"📚 {nome} — {c.titulo} (aula {aula.numero} de {aula.total}){codigos}", "✏️ Para o quadro:"]
-    perguntas = ctx.estado.questionario(aula.turma_id, chave_aula(aula))
+    perguntas = ctx.estado.questionario(_dono(ctx, aula), chave_aula(aula))
     if perguntas:
         linhas += [f"{i}. {p}" for i, p in enumerate(perguntas, 1)]
     else:

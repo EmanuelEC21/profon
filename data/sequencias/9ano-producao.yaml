@@ -1,0 +1,5 @@
+# Novembro/2026 — sexta 07:30, 8º/9º juntos (nivelado pelo 9º). Foco em produção de texto.
+ano: 9
+conteudos:
+  - {id: 9p-carta-aberta, bimestre: 4, titulo: "Produção: carta aberta", habilidades: [EF89LP19, EF69LP22], aulas: 1, aulas_minimas: 1}
+  - {id: 9p-reescrita-opiniao, bimestre: 4, titulo: "Reescrita: artigo de opinião", habilidades: [EF69LP18, EF69LP08], aulas: 1, aulas_minimas: 1}

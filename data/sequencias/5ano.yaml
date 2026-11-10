@@ -1,0 +1,5 @@
+# Novembro/2026 — 5º ano (turmas G5a, G5b e G45). Campo político-cidadão.
+ano: 5
+conteudos:
+  - {id: 5-reportagem, bimestre: 4, titulo: Reportagem, habilidades: [EF05LP15, EF05LP17], aulas: 2, aulas_minimas: 1}
+  - {id: 5-noticia-manchete, bimestre: 4, titulo: Notícia e manchete, habilidades: [EF35LP16], aulas: 1, aulas_minimas: 1}

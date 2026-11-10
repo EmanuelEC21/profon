@@ -1,0 +1,111 @@
+# Planejamento mensal — NOVEMBRO/2026 — Língua Portuguesa — NACE (matutino)
+# Gera: planejamentos/9 Novembro/NOV - <N> ANO - LP.pdf  (python scripts/gerar_planejamento.py data/planejamentos/2026-11.yaml)
+mes: NOV
+pasta: 9 Novembro
+anos:
+  1:
+    objetivo: Ler e produzir, com a mediação do professor, gêneros do cotidiano (lista, convite, aviso e receita), reconhecendo para que servem e como se organizam, avançando na escrita alfabética.
+    conteudos: Lista; convite; aviso; receita; função social dos textos do cotidiano; organização na página; escrita de palavras e frases; ordem alfabética; letras e sons.
+    habilidades:
+      - EF12LP04 — Ler e compreender listas, agendas, calendários, avisos, convites e receitas, considerando a situação comunicativa e a finalidade do texto.
+      - EF01LP17 — Planejar e produzir, em colaboração, listas, avisos, convites e receitas, considerando a situação comunicativa e o tema.
+      - EF01LP20 — Identificar e reproduzir, em listas, avisos, convites e receitas, a formatação e a diagramação próprias desses textos.
+    metodologias: Leitura compartilhada; escrita coletiva com o professor como escriba; análise de textos reais do cotidiano; jogos com letras e palavras; produção em duplas.
+    atividades: Leitura de convites e receitas reais; montagem de lista de compras da turma; caça-palavras e cruzadinha com palavras do tema; produção coletiva de um convite; escrita de aviso para o mural da sala.
+    avaliacao: Participação nas leituras, reconhecimento da finalidade dos textos, avanço na escrita de palavras e frases e envolvimento nas produções coletivas.
+    recursos: Convites, receitas e folhetos reais; alfabeto móvel; fichas de palavras; quadro; caderno; atividades impressas ilustradas.
+  2:
+    objetivo: Ler e produzir bilhetes, cartas, cartazes e folhetos, compreendendo a situação comunicativa (quem escreve, para quem e para quê) e a organização própria de cada gênero.
+    conteudos: Bilhete; carta; cartaz; folheto; remetente e destinatário; saudação e despedida; data e local; linguagem persuasiva; texto e imagem; ortografia.
+    habilidades:
+      - EF02LP13 — Planejar e produzir bilhetes e cartas, impressos ou digitais, considerando a situação comunicativa e o tema.
+      - EF02LP16 — Identificar e reproduzir, em bilhetes, recados, avisos, cartas e e-mails, a formatação e a diagramação próprias desses textos.
+      - EF12LP04 — Ler e compreender avisos, convites e outros textos do cotidiano, considerando a finalidade do texto.
+      - EF02LP18 — Planejar e produzir cartazes e folhetos para divulgar eventos da escola ou da comunidade, com linguagem persuasiva e elementos visuais.
+    metodologias: Leitura compartilhada e autônoma; comparação entre gêneros; escrita orientada; produção em grupos; revisão coletiva.
+    atividades: Leitura e comparação entre bilhete e carta; troca de bilhetes entre colegas; escrita de carta para um familiar; produção de cartaz para um evento da escola; exposição dos cartazes.
+    avaliacao: Identificação das partes do bilhete e da carta, adequação ao destinatário, uso de imagem e texto no cartaz e participação nas produções.
+    recursos: Modelos de bilhetes, cartas e folhetos; cartolina; lápis de cor; revistas para recorte; quadro; caderno.
+  3:
+    objetivo: Ler e produzir cartas pessoais e diários, expressando sentimentos, opiniões e vivências, e reconhecendo a formatação própria dos gêneros epistolares.
+    conteudos: Carta pessoal; diário; relato de vivências; expressão de sentimentos e opiniões; data, saudação, corpo e despedida; primeira pessoa; adjetivos; pontuação.
+    habilidades:
+      - EF03LP12 — Ler e compreender, com autonomia, cartas pessoais e diários, com expressão de sentimentos e opiniões.
+      - EF03LP13 — Planejar e produzir cartas pessoais e diários, com expressão de sentimentos e opiniões, considerando a situação comunicativa.
+      - EF03LP17 — Identificar e reproduzir, em gêneros epistolares e diários, a formatação própria desses textos.
+    metodologias: Leitura compartilhada de cartas e trechos de diários; roda de conversa; escrita individual com roteiro; revisão em duplas; leitura em voz alta das produções.
+    atividades: Leitura de carta pessoal e identificação de suas partes; escrita de carta para um colega; leitura de trechos de diário; produção de página de diário sobre a semana; revisão e reescrita.
+    avaliacao: Reconhecimento das partes da carta e do diário, expressão de sentimentos e opiniões, uso da primeira pessoa e cuidado com pontuação e ortografia.
+    recursos: Cartas e diários impressos; livros de literatura infantil em forma de diário; caderno; quadro; envelopes.
+  4:
+    objetivo: Ler, analisar e produzir notícias e entrevistas, identificando fatos, participantes, tempo e lugar e compreendendo a organização dos textos jornalísticos para o público infantil.
+    conteudos: Notícia; manchete; lide; corpo da notícia; fato, participantes, tempo e lugar; entrevista; perguntas e respostas; roteiro; jornal falado.
+    habilidades:
+      - EF04LP14 — Identificar, em notícias, fatos, participantes, local e momento da ocorrência do fato noticiado.
+      - EF35LP16 — Identificar e reproduzir, em notícias, manchetes, lides e corpo de notícias simples para o público infantil.
+      - EF04LP17 — Produzir jornais radiofônicos ou televisivos e entrevistas, orientando-se por roteiro.
+      - EF04LP16 — Produzir notícias sobre fatos do universo escolar, para o jornal da escola.
+    metodologias: Leitura de notícias de jornais infantis; análise coletiva das partes da notícia; trabalho em grupos; simulação de entrevista; produção orientada.
+    atividades: Leitura de notícia infantil e identificação de o quê, quem, quando e onde; criação de manchetes; roteiro de perguntas para entrevista; entrevista com um funcionário da escola; produção de notícia para o mural.
+    avaliacao: Identificação dos elementos da notícia, elaboração de perguntas, participação na entrevista e produção de notícia com manchete e lide.
+    recursos: Jornais e revistas infantis; notícias impressas; celular para gravação de áudio; quadro; caderno; papel pardo para o mural.
+  5:
+    objetivo: Ler e produzir reportagens e notícias sobre temas de interesse da turma, compreendendo a pesquisa de informações e a organização dos textos do campo político-cidadão.
+    conteudos: Reportagem; notícia; manchete e lide; pesquisa e seleção de informações; fontes; texto e imagem; roteiro de reportagem; fato e opinião.
+    habilidades:
+      - EF05LP15 — Ler e compreender, com autonomia, notícias, reportagens e outros gêneros do campo político-cidadão.
+      - EF05LP17 — Produzir roteiro para edição de uma reportagem digital sobre temas de interesse da turma, a partir de buscas de informações.
+      - EF35LP16 — Identificar e reproduzir, em notícias, manchetes, lides e corpo de notícias simples para o público infantil.
+    metodologias: Leitura e análise de reportagens; pesquisa orientada; trabalho em grupos; produção de roteiro; apresentação para a turma.
+    atividades: Leitura de reportagem e levantamento das informações principais; diferença entre notícia e reportagem; escolha de tema da comunidade; pesquisa e roteiro de reportagem; produção de manchetes e lides.
+    avaliacao: Compreensão das reportagens lidas, seleção de informações, organização do roteiro e produção de manchete e lide adequados.
+    recursos: Reportagens impressas e digitais; revistas; celular ou computador para pesquisa; quadro; caderno.
+  6:
+    objetivo: Analisar peças publicitárias e propagandas, reconhecendo as estratégias de persuasão, e planejar uma campanha sobre um tema relevante para a escola ou a comunidade.
+    conteudos: Publicidade e propaganda; anúncio; cartaz; slogan; público-alvo; estratégias de persuasão; linguagem verbal e não verbal; campanha publicitária.
+    habilidades:
+      - EF69LP02 — Analisar e comparar peças publicitárias variadas, de forma a perceber a articulação entre elas em campanhas.
+      - EF69LP04 — Identificar e analisar os efeitos de sentido que fortalecem a persuasão nos textos publicitários.
+      - EF69LP09 — Planejar uma campanha publicitária sobre questões significativas para a escola ou a comunidade.
+      - EF67LP13 — Produzir, revisar e editar textos publicitários, explorando recursos multissemióticos.
+    metodologias: Análise de anúncios e propagandas; debate sobre consumo e persuasão; trabalho em grupos; produção criativa; apresentação das campanhas.
+    atividades: Análise de anúncios impressos e digitais; identificação de público-alvo, slogan e apelo; diferença entre publicidade e propaganda; criação de slogan; planejamento e produção de cartaz para campanha na escola.
+    avaliacao: Identificação das estratégias de persuasão, participação nas análises, criatividade e adequação da campanha ao público e ao objetivo.
+    recursos: Anúncios de revistas e da internet; projetor; cartolina; canetas coloridas; quadro; caderno.
+  7:
+    objetivo: Conhecer direitos e canais de reclamação e solicitação, analisando e produzindo cartas de reclamação e de solicitação sobre problemas reais da escola ou da comunidade.
+    conteudos: Direitos do cidadão; canais de reclamação (ouvidoria, SAC); carta de reclamação e de solicitação; estrutura da carta; justificativa; linguagem formal.
+    habilidades:
+      - EF67LP16 — Explorar canais de reclamação e de solicitação, como ouvidorias e SAC.
+      - EF67LP17 — Analisar a forma de organização das cartas de solicitação e de reclamação.
+      - EF67LP18 — Identificar o objeto da reclamação ou da solicitação e sua justificativa.
+      - EF67LP19 — Levantar problemas da comunidade e produzir reclamações ou solicitações.
+    metodologias: Roda de conversa sobre direitos; análise de cartas reais; levantamento de problemas da comunidade; produção em duplas; revisão coletiva.
+    atividades: Levantamento de problemas da escola e do bairro; análise das partes de uma carta de reclamação; produção, revisão e reescrita de carta de reclamação.
+    avaliacao: Compreensão da estrutura da carta, clareza da reclamação e da justificativa, uso de linguagem formal e qualidade da produção.
+    recursos: Cartas de reclamação impressas; Código de Defesa do Consumidor e ECA (trechos); quadro; caderno; projetor.
+  8:
+    objetivo: Ler, analisar e produzir textos de divulgação científica e apresentá-los em seminário, articulando texto, imagens e infográficos na construção do conhecimento.
+    conteudos: Texto de divulgação científica; título, introdução e divisão em tópicos; infográficos e esquemas; linguagem científica; pesquisa; seminário; organização da fala.
+    habilidades:
+      - EF69LP29 — Refletir sobre os contextos de produção dos gêneros de divulgação científica e sua relação com a construção composicional e o estilo.
+      - EF69LP42 — Analisar a construção composicional dos textos de divulgação de conhecimentos.
+      - EF69LP35 — Planejar textos de divulgação científica a partir de esquemas, notas e sínteses de leituras.
+      - EF69LP40 — Analisar a construção composicional dos gêneros de apresentação oral, como seminários.
+    metodologias: Leitura e análise de artigos de divulgação científica; construção de esquemas; pesquisa em grupos; preparação e apresentação de seminário.
+    atividades: Leitura de artigo de divulgação científica e identificação de suas partes; leitura de infográfico; esquema-resumo do texto; pesquisa sobre um tema científico; apresentação de seminário.
+    avaliacao: Compreensão dos textos, qualidade dos esquemas, pesquisa e organização da apresentação oral.
+    recursos: Revistas de divulgação científica; infográficos; projetor; computador ou celular para pesquisa; quadro; caderno.
+  9:
+    objetivo: Analisar e produzir textos argumentativos e participar de debate regrado, defendendo pontos de vista com argumentos consistentes e respeitando a posição do outro.
+    conteudos: Texto argumentativo; tese; argumentos e contra-argumentos; tipos de argumento; operadores argumentativos; coesão entre parágrafos; debate regrado; carta aberta; reescrita.
+    habilidades:
+      - EF89LP14 — Analisar, em textos argumentativos, os movimentos de sustentação, refutação e negociação e os tipos de argumentos.
+      - EF69LP18 — Utilizar, na escrita e reescrita de textos argumentativos, recursos linguísticos que marquem as relações de sentido entre parágrafos.
+      - EF89LP12 — Planejar coletivamente a realização de um debate sobre tema de interesse coletivo, com regras acordadas.
+      - EF89LP15 — Utilizar, nos debates, operadores argumentativos que marcam a defesa de ideia e o diálogo com a tese do outro.
+      - EF89LP19 — Analisar a forma de organização das cartas abertas, abaixo-assinados e petições on-line.
+    metodologias: Leitura e análise de textos argumentativos; debate regrado; trabalho em grupos; produção e reescrita de textos; revisão em pares.
+    atividades: Identificação de tese e argumentos em artigo de opinião; quadro de operadores argumentativos; preparação e realização de debate regrado; produção de carta aberta; reescrita de artigo de opinião.
+    avaliacao: Identificação de tese e argumentos, participação no debate, uso de operadores argumentativos e qualidade da produção e da reescrita.
+    recursos: Artigos de opinião e cartas abertas; quadro; caderno; cronômetro para o debate; projetor.

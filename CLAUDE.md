@@ -23,14 +23,18 @@ Também remaneja a fila de cada turma quando uma aula não acontece.
 | `profon/sequencia.py` | `Conteudo`, `carregar_sequencia`, `validar_sequencia`: sequência de conteúdos por ano |
 | `data/sequencias/<nome>.yaml` | sequências; cada turma usa a do seu campo `sequencia` (padrão `<ano>ano`) |
 | `scripts/gerar_sequencia.py` | rascunho da sequência de um ano via IA, para o professor revisar |
-| `profon/ia.py` | `ClienteIA` (protocolo), `ClienteClaude` (SDK, fallback de recusa), `ClienteGemini` (google-genai), `criar_cliente(provedor, modelo)`, `RecusaIA`, `gerar_questionario` (3 a 5 perguntas) |
+| `profon/ia.py` | `ClienteIA` (protocolo), `ClienteClaude` (SDK, fallback de recusa), `ClienteGemini` (google-genai; intervalo de 13 s entre pedidos, modelo reserva e nova rodada em sobrecarga), `criar_cliente(provedor, modelo)`, `RecusaIA`, `gerar_questionario` (3 a 5 perguntas) |
 | `profon/estado.py` | `Estado` (SQLite): cancelamentos, ajustes de compressão e questionários. Só eventos |
 | `profon/agenda.py` | `datas_de_aula`, `montar_agenda` → `AulaPlanejada`, `verificar_atraso` → `Atraso`: agenda derivada e atraso |
 | `profon/acoes.py` | `pergunta_sem_aula`, `confirmar_sem_aula`, `atrasos`, `texto_atraso`, `aplicar_compressao`: regras do bot sem Telegram |
-| `profon/mensagem.py` | `Contexto`, `aulas_do_dia`, `chave_aula`, `pregerar` (lote semanal) e `compor_mensagens` (texto da manhã, divide acima de 4096) |
+| `profon/mensagem.py` | `Contexto`, `aulas_do_dia`, `chave_aula`, `pregerar` (lote semanal; questionário guardado por sequência, compartilhado entre turmas) e `compor_mensagens` (texto da manhã, divide acima de 4096) |
 | `profon/bot.py` | Telegram: `/start /hoje /amanha /semaula /naoterminou`, texto livre "não teve aula", botões (`sem:*`, `nt:*`, `acel:*`), jobs (envio seg a sex no horário configurado; pré-geração domingo 20h); `criar_app` |
 | `profon/__main__.py` | `python -m profon`: `carregar_contexto` (YAML, sequências, BNCC, banco) e polling |
 | `docs/guia-do-professor.md` | guia de uso para o professor |
+| `profon/planejamento.py` | planejamento mensal oficial: `validar_planejamento`, `montar_tarefas` (modelo = mesmo ano no mês anterior) |
+| `data/planejamentos/AAAA-MM.yaml` | conteúdo do planejamento do mês (7 campos por ano, 1º ao 9º) |
+| `scripts/gerar_planejamento.py` + `scripts/preencher_planejamento.ps1` | geram `planejamentos/<pasta>/<MÊS> - N ANO - LP.docx/.pdf` pelo Word e copiam o PDF para `Por Ano/` |
+| `planejamentos/` | planejamentos do professor (fora do git) |
 | `config/escola.example.yaml` | modelo de configuração (copiar para `config/escola.yaml`) |
 | `docs/arquitetura.md` | como as partes conversam |
 | `docs/decisoes.md` | o que foi decidido e por quê |

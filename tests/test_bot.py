@@ -129,7 +129,7 @@ def test_job_semanal_avisa_atraso_sem_cancelamento(ctx):
     _rodar(bot.job_pregerar(c))  # 6A precisa de 4 aulas e o bimestre só tem 3
     textos = [ch.kwargs["text"] for ch in c.bot.send_message.call_args_list]
     assert any("6º A está atrasando" in t for t in textos)
-    assert ctx.estado.questionario("6A", "6-a#1/2") is not None  # e preparou a partir de hoje
+    assert ctx.estado.questionario("6ano", "6-a#1/2") is not None  # e preparou a partir de hoje
 
 
 def test_main_carrega_contexto(tmp_path):
