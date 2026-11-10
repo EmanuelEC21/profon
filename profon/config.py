@@ -23,6 +23,11 @@ class Turma:
     nome: str
     turno: str
     dias_semana: tuple[int, ...]  # 0 = segunda ... 4 = sexta
+    anos: tuple[int, ...] = ()  # turma multisseriada: todos os anos; `ano` é sempre o mais alto
+
+    def __post_init__(self):
+        if not self.anos:
+            object.__setattr__(self, "anos", (self.ano,))
 
 
 @dataclass(frozen=True)
@@ -84,7 +89,9 @@ def carregar_escola(caminho: Path) -> Escola:
         if str(t["id"]) in ids:
             raise ValueError(f"Turma duplicada: {t['id']}")
         ids.add(str(t["id"]))
-        turmas.append(Turma(str(t["id"]), int(t["ano"]), str(t["nome"]), str(t["turno"]), dias))
+        anos = tuple(sorted(int(a) for a in t["anos"])) if "anos" in t else (int(t["ano"]),)
+        # Multisseriada (ex.: 1º, 2º e 3º juntos): o planejamento segue o ano mais alto.
+        turmas.append(Turma(str(t["id"]), max(anos), str(t["nome"]), str(t["turno"]), dias, anos))
 
     provedor = str(dados.get("provedor_ia", "gemini")).lower()
     if provedor not in PROVEDORES:

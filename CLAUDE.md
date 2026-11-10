@@ -9,14 +9,14 @@ Também remaneja a fila de cada turma quando uma aula não acontece.
 1. **Leia este mapa antes de mexer em qualquer coisa.** Descubra aqui onde fica o que foi pedido e abra só esses arquivos.
 2. **Toda mudança que cria, move ou remove um módulo atualiza este mapa no mesmo commit.**
 3. Textos para o professor ficam em português do Brasil. O fuso é `America/Fortaleza`.
-4. Segredos ficam só no `.env` (veja `.env.example`), nunca no código nem no YAML.
+4. Segredos ficam só no `.env` (veja `.env.example`), nunca no código nem no YAML. **O `.env.example` é só um modelo com valores vazios.** Antes de commitar, confira o que entrou (`git diff --cached`). Nunca use `git add -A` às cegas.
 5. TDD: teste primeiro, depois o código.
 
 ## Onde está cada coisa
 
 | Caminho | Responsabilidade |
 |---|---|
-| `profon/config.py` | `Escola`, `Turma`, `Bimestre` e `carregar_escola(yaml)`: dados admin, calendário e grade |
+| `profon/config.py` | `Escola`, `Turma`, `Bimestre` e `carregar_escola(yaml)`: dados admin, calendário e grade. Turma multisseriada tem `anos` e `ano` = o mais alto |
 | `profon/curriculo.py` | `Habilidade`, `anos_do_codigo`, `extrair_habilidades`, `carregar_habilidades`: habilidades de LP da BNCC |
 | `scripts/extrair_bncc.py` | gera `data/curriculo/lp_habilidades.json` a partir do `BNCC.pdf` (391 habilidades) |
 | `data/curriculo/lp_habilidades.json` | habilidades extraídas (gerado, versionado) |

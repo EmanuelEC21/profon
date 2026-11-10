@@ -103,3 +103,21 @@ def test_provedor_invalido_falha(tmp_path):
     )
     with pytest.raises(ValueError, match="provedor_ia"):
         carregar_escola(arq)
+
+
+def test_turma_multisseriada_usa_ano_mais_alto(tmp_path):
+    arq = tmp_path / "e.yaml"
+    arq.write_text(
+        _yaml_minimo(
+            "  - {numero: 1, inicio: 2027-02-01, fim: 2027-04-30}",
+            "  - {id: M1, anos: [1, 2, 3], nome: 1º/2º/3º, turno: manhã, dias_semana: [0]}",
+        ),
+        encoding="utf-8",
+    )
+    t = carregar_escola(arq).turma("M1")
+    assert (t.ano, t.anos) == (3, (1, 2, 3))
+
+
+def test_turma_seriada_tem_um_ano():
+    t = carregar_escola(EXEMPLO).turma("6A")
+    assert (t.ano, t.anos) == (6, (6,))

@@ -32,6 +32,7 @@ dias_sem_aula:
 
 # dias_semana: 0 = segunda, 1 = terça, 2 = quarta, 3 = quinta, 4 = sexta.
 # Aula geminada (duas seguidas) conta como um dia só.
+# Turma multisseriada: use `anos: [1, 2, 3]` no lugar de `ano`. O planejamento segue o ano mais alto.
 turmas:
   - {id: 1A, ano: 1, nome: 1º A, turno: manhã, dias_semana: [0, 2, 4]}
   - {id: 5A, ano: 5, nome: 5º A, turno: manhã, dias_semana: [0, 1, 3]}
