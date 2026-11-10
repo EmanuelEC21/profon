@@ -13,8 +13,9 @@ def test_mensagem_com_questionario(ctx):
     msgs = compor_mensagens(ctx, SEG1)
     assert len(msgs) == 1
     texto = msgs[0]
-    assert texto.startswith("☀️ Bom dia! Hoje: 6º A e 9º A")
-    assert "📚 6º A — Crônica (aula 1 de 2)" in texto
+    assert texto.startswith("☀️ <b>Bom dia!</b>\n\n<b>Hoje:</b>\n• 6º A\n• 9º A\n")
+    assert "📚 <b>6º A</b>\n<b>Crônica</b> — aula 1 de 2" in texto
+    assert "<i>" not in texto
     assert "1. O que é crônica?" in texto and "2. Cite um cronista." in texto
 
 
@@ -45,7 +46,7 @@ def test_questionario_acompanha_o_conteudo_remanejado(ctx):
     pregerar(ctx, ClienteFalso(QUATRO), {}, SEG1, dias=1)  # Crônica aula 1 preparada para SEG1
     confirmar_sem_aula(ctx, SEG1, "feriado")  # Crônica aula 1 vai para SEG2
     texto = compor_mensagens(ctx, SEG2)[0]
-    assert "Crônica (aula 1 de 2)" in texto
+    assert "<b>Crônica</b> — aula 1 de 2" in texto
     assert "1. O que é reportagem?" in texto
 
 
@@ -69,7 +70,7 @@ def test_horario_aparece_e_ordena(ctx):
     turmas = tuple(replace(t, horario={"6A": "10:00", "9A": "07:30"}[t.id]) for t in ctx.escola.turmas)
     ctx.escola = replace(ctx.escola, turmas=turmas)
     texto = compor_mensagens(ctx, SEG1)[0]
-    assert texto.index("07:30 · 9º A") < texto.index("10:00 · 6º A")
+    assert texto.index("<b>07:30 · 9º A</b>") < texto.index("<b>10:00 · 6º A</b>")
 
 
 def test_turmas_da_mesma_sequencia_compartilham_questionario(ctx):
@@ -84,3 +85,11 @@ def test_turmas_da_mesma_sequencia_compartilham_questionario(ctx):
     pregerar(ctx, cliente, {}, SEG1, dias=1)
     assert len(cliente.chamadas) == 2  # 6A e 6B (mesma sequência) = 1 pedido; 9A = 1 pedido
     assert "1. O que é reportagem?" in compor_mensagens(ctx, SEG1)[0].split("6º B")[1]
+
+
+def test_nomes_com_simbolos_nao_quebram_o_html(ctx):
+    from dataclasses import replace
+
+    turmas = tuple(replace(t, nome="6º A <manhã> & cia") if t.id == "6A" else t for t in ctx.escola.turmas)
+    ctx.escola = replace(ctx.escola, turmas=turmas)
+    assert "6º A &lt;manhã&gt; &amp; cia" in compor_mensagens(ctx, SEG1)[0]

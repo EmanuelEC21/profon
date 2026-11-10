@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from html import escape as esc
 from datetime import date, timedelta
 
 from profon.agenda import AulaPlanejada, montar_agenda
@@ -88,30 +89,34 @@ def pregerar(ctx: Contexto, cliente, habilidades: dict, inicio: date, dias: int 
 
 def _bloco(ctx: Contexto, aula: AulaPlanejada) -> str:
     turma = ctx.escola.turma(aula.turma_id)
-    nome = f"{turma.horario} · {turma.nome}" if turma.horario else turma.nome
+    nome = esc(f"{turma.horario} · {turma.nome}" if turma.horario else turma.nome)
     if aula.conteudo is None:
-        return f"📚 {nome} — Sequência concluída (aula livre/revisão)"
+        return f"📚 <b>{nome}</b>\nSequência concluída (aula livre ou revisão)"
     c = aula.conteudo
-    codigos = f" · {', '.join(c.habilidades)}" if c.habilidades else ""
-    linhas = [f"📚 {nome} — {c.titulo} (aula {aula.numero} de {aula.total}){codigos}", "✏️ Para o quadro:"]
+    codigos = f" · {esc(', '.join(c.habilidades))}" if c.habilidades else ""
+    linhas = [
+        f"📚 <b>{nome}</b>",
+        f"<b>{esc(c.titulo)}</b> — aula {aula.numero} de {aula.total}{codigos}",
+        "✏️ <b>Para o quadro:</b>",
+    ]
     material = ctx.estado.material(_dono(ctx, aula), chave_aula(aula))
     perguntas = material["perguntas"] if material else None
     if perguntas:
-        linhas += [f"{i}. {p}" for i, p in enumerate(perguntas, 1)]
+        linhas += [f"{i}. {esc(p)}" for i, p in enumerate(perguntas, 1)]
     else:
         linhas.append("(questionário indisponível hoje)")
     return "\n".join(linhas)
 
 
 def compor_mensagens(ctx: Contexto, dia: date) -> list[str]:
+    """Mensagem da manhã em HTML do Telegram (negrito; sem itálico). Divide por turma se passar de 4096."""
     aulas = aulas_do_dia(ctx, dia)
     if not aulas:
         return []
-    from profon.acoes import juntar_nomes
-
-    cabecalho = f"☀️ Bom dia! Hoje: {juntar_nomes([ctx.escola.turma(a.turma_id).nome for a in aulas])}"
+    turmas = "\n".join(f"• {esc(ctx.escola.turma(a.turma_id).nome)}" for a in aulas)
+    cabecalho = f"☀️ <b>Bom dia!</b>\n\n<b>Hoje:</b>\n{turmas}"
     blocos = [_bloco(ctx, a) for a in aulas]
     inteira = "\n\n".join([cabecalho, *blocos])
     if len(inteira) <= LIMITE_TELEGRAM:
         return [inteira]
-    return [cabecalho, *(b[:LIMITE_TELEGRAM] for b in blocos)]
+    return [cabecalho, *blocos]

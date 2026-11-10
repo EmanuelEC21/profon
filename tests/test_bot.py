@@ -41,8 +41,9 @@ def test_chat_estranho_ignorado(ctx):
 def test_hoje_envia_mensagem(ctx):
     up = _update()
     _rodar(bot.cmd_hoje(up, _context(ctx, SEG1)))
-    texto = up.message.reply_text.call_args_list[0].args[0]
-    assert texto.startswith("☀️ Bom dia!")
+    chamada = up.message.reply_text.call_args_list[0]
+    assert chamada.args[0].startswith("☀️ <b>Bom dia!</b>")
+    assert chamada.kwargs["parse_mode"] == "HTML"
 
 
 def test_semaula_sem_aulas_responde_aviso(ctx):

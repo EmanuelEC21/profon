@@ -60,7 +60,7 @@ async def _enviar_dia(enviar, context, dia: date, botao: bool) -> bool:
     msgs = compor_mensagens(_ctx(context), dia)
     for i, m in enumerate(msgs):
         ultimo = i == len(msgs) - 1
-        await enviar(m, reply_markup=_botao_sem_aula(dia) if botao and ultimo else None)
+        await enviar(m, reply_markup=_botao_sem_aula(dia) if botao and ultimo else None, parse_mode="HTML")
     return bool(msgs)
 
 
@@ -187,8 +187,8 @@ async def callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def job_envio(context: ContextTypes.DEFAULT_TYPE) -> None:
-    async def enviar(texto, reply_markup=None):
-        await context.bot.send_message(chat_id=context.job.chat_id, text=texto, reply_markup=reply_markup)
+    async def enviar(texto, reply_markup=None, parse_mode=None):
+        await context.bot.send_message(chat_id=context.job.chat_id, text=texto, reply_markup=reply_markup, parse_mode=parse_mode)
 
     await _enviar_dia(enviar, context, _hoje(context), botao=True)
 
