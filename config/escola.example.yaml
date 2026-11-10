@@ -7,7 +7,7 @@ escola: Nome da Escola
 coordenador: Nome do Coordenador
 disciplina: Língua Portuguesa
 horario_envio: "06:00"          # hora da mensagem da manhã
-modelo_ia: claude-sonnet-5-5
+modelo_ia: claude-opus-5-5
 telegram_chat_id: 0             # o bot mostra esse número no /start
 
 bimestres:

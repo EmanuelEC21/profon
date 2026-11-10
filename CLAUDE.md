@@ -20,8 +20,10 @@ Também remaneja a fila de cada turma quando uma aula não acontece.
 | `profon/curriculo.py` | `Habilidade`, `anos_do_codigo`, `extrair_habilidades`, `carregar_habilidades`: habilidades de LP da BNCC |
 | `scripts/extrair_bncc.py` | gera `data/curriculo/lp_habilidades.json` a partir do `BNCC.pdf` (391 habilidades) |
 | `data/curriculo/lp_habilidades.json` | habilidades extraídas (gerado, versionado) |
-| `profon/sequencia.py` | *(a criar, Task 3)* sequência de conteúdos por ano |
-| `profon/ia.py` | *(a criar, Tasks 3 e 7)* cliente da Claude e geração do questionário |
+| `profon/sequencia.py` | `Conteudo`, `carregar_sequencia`, `validar_sequencia`: sequência de conteúdos por ano |
+| `data/sequencias/<N>ano.yaml` | sequência de cada ano (o `6ano.yaml` é exemplo) |
+| `scripts/gerar_sequencia.py` | rascunho da sequência de um ano via IA, para o professor revisar |
+| `profon/ia.py` | `ClienteIA` (protocolo), `ClienteClaude` (SDK, fallback de recusa), `RecusaIA`; questionário (Task 7) |
 | `profon/estado.py` | *(a criar, Task 4)* SQLite: cancelamentos, ajustes e questionários |
 | `profon/agenda.py` | *(a criar, Task 5)* agenda derivada por turma e detecção de atraso |
 | `profon/acoes.py` | *(a criar, Task 6)* regras do bot sem Telegram: "não teve aula" e compressão |

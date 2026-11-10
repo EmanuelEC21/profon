@@ -1,0 +1,12 @@
+# EXEMPLO para testes e demonstração — o professor substitui pela sequência real do 6º ano.
+ano: 6
+conteudos:
+  - {id: 6-cronica, bimestre: 1, titulo: Crônica, habilidades: [EF67LP28, EF69LP44], aulas: 6, aulas_minimas: 4}
+  - {id: 6-substantivo-adjetivo, bimestre: 1, titulo: Substantivo e adjetivo, habilidades: [EF06LP04], aulas: 5, aulas_minimas: 3}
+  - {id: 6-pontuacao, bimestre: 1, titulo: Pontuação, habilidades: [EF67LP33], aulas: 3, aulas_minimas: 2}
+  - {id: 6-noticia, bimestre: 2, titulo: Notícia e imparcialidade, habilidades: [EF06LP01], aulas: 6, aulas_minimas: 4}
+  - {id: 6-modos-verbais, bimestre: 2, titulo: Modos verbais, habilidades: [EF06LP05, EF06LP04], aulas: 6, aulas_minimas: 4}
+  - {id: 6-ortografia, bimestre: 2, titulo: Ortografia, habilidades: [EF67LP32], aulas: 3, aulas_minimas: 2}
+  - {id: 6-texto-dramatico, bimestre: 3, titulo: Texto dramático, habilidades: [EF67LP29], aulas: 6, aulas_minimas: 4}
+  - {id: 6-narrativa, bimestre: 3, titulo: Narrativa ficcional, habilidades: [EF69LP47, EF67LP30], aulas: 8, aulas_minimas: 6}
+  - {id: 6-producao-conto, bimestre: 4, titulo: Produção de conto, habilidades: [EF67LP30, EF06LP11], aulas: 8, aulas_minimas: 6}

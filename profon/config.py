@@ -88,7 +88,7 @@ def carregar_escola(caminho: Path) -> Escola:
         coordenador=str(dados["coordenador"]),
         disciplina=str(dados["disciplina"]),
         horario_envio=_hora(dados.get("horario_envio", "06:00")),
-        modelo_ia=str(dados.get("modelo_ia", "claude-sonnet-5-5")),
+        modelo_ia=str(dados.get("modelo_ia", "claude-opus-5-5")),
         telegram_chat_id=int(dados["telegram_chat_id"]),
         bimestres=bimestres,
         dias_sem_aula={_data(k): str(v) for k, v in (dados.get("dias_sem_aula") or {}).items()},
