@@ -25,7 +25,7 @@ Também remaneja a fila de cada turma quando uma aula não acontece.
 | `scripts/gerar_sequencia.py` | rascunho da sequência de um ano via IA, para o professor revisar |
 | `profon/ia.py` | `ClienteIA` (protocolo), `ClienteClaude` (SDK, fallback de recusa), `RecusaIA`; questionário (Task 7) |
 | `profon/estado.py` | `Estado` (SQLite): cancelamentos, ajustes de compressão e questionários. Só eventos |
-| `profon/agenda.py` | *(a criar, Task 5)* agenda derivada por turma e detecção de atraso |
+| `profon/agenda.py` | `datas_de_aula`, `montar_agenda` → `AulaPlanejada`, `verificar_atraso` → `Atraso`: agenda derivada e atraso |
 | `profon/acoes.py` | *(a criar, Task 6)* regras do bot sem Telegram: "não teve aula" e compressão |
 | `profon/mensagem.py` | *(a criar, Tasks 6 e 7)* aulas do dia e texto da mensagem da manhã |
 | `profon/bot.py`, `profon/__main__.py` | *(a criar, Task 8)* Telegram: comandos, botões e jobs agendados |
