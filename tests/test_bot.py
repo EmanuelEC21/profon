@@ -121,7 +121,7 @@ def test_criar_app_agenda_jobs(ctx):
 
 
 def test_job_semanal_avisa_atraso_sem_cancelamento(ctx):
-    from tests.test_questionario import QUATRO, ClienteFalso
+    from tests.test_questionario import MATERIAL_JSON as QUATRO, ClienteFalso
 
     c = _context(ctx, SEG1)
     c.bot_data["cliente"] = ClienteFalso(QUATRO)
@@ -129,7 +129,7 @@ def test_job_semanal_avisa_atraso_sem_cancelamento(ctx):
     _rodar(bot.job_pregerar(c))  # 6A precisa de 4 aulas e o bimestre só tem 3
     textos = [ch.kwargs["text"] for ch in c.bot.send_message.call_args_list]
     assert any("6º A está atrasando" in t for t in textos)
-    assert ctx.estado.questionario("6ano", "6-a#1/2") is not None  # e preparou a partir de hoje
+    assert ctx.estado.material("6ano", "6-a#1/2") is not None  # e preparou a partir de hoje
 
 
 def test_main_carrega_contexto(tmp_path):
@@ -146,13 +146,13 @@ def test_main_carrega_contexto(tmp_path):
 
 
 def test_job_completar_prepara_sem_alertas(ctx):
-    from tests.test_questionario import QUATRO, ClienteFalso
+    from tests.test_questionario import MATERIAL_JSON as QUATRO, ClienteFalso
 
     c = _context(ctx, SEG1)
     c.bot_data["cliente"] = ClienteFalso(QUATRO)
     c.job = SimpleNamespace(chat_id=1)
     _rodar(bot.job_completar(c))
-    assert ctx.estado.questionario("6ano", "6-a#1/2") is not None
+    assert ctx.estado.material("6ano", "6-a#1/2") is not None
     c.bot.send_message.assert_not_called()  # silencioso: só preenche lacunas
 
 

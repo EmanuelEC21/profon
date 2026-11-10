@@ -43,10 +43,10 @@ def test_questionario_ruim_duas_vezes_falha(ctx):
 
 
 def test_pregerar_salva_e_pula_existentes(ctx):
-    cliente = ClienteFalso(QUATRO)
+    cliente = ClienteFalso(MATERIAL_JSON)
     falhas = pregerar(ctx, cliente, {}, SEG1, dias=1)
     assert falhas == []
-    assert ctx.estado.questionario("6ano", "6-a#1/2") is not None
+    assert ctx.estado.material("6ano", "6-a#1/2")["roteiro"]
     n = len(cliente.chamadas)
     pregerar(ctx, cliente, {}, SEG1, dias=1)
     assert len(cliente.chamadas) == n
@@ -83,3 +83,50 @@ def test_motivo_em_portugues(erro, esperado):
 def test_falha_da_pregeracao_vem_curta(ctx):
     falhas = pregerar(ctx, ClienteFalso(_Erro(429, "x" * 3000 + "PerDay")), {}, SEG1, dias=1)
     assert falhas[0] == "6º A 01/03 (Crônica): cota diária do Gemini esgotada"
+
+
+# --- Material completo: roteiro do professor + questões, num pedido só ------------------------
+
+MATERIAL_JSON = """```json
+{"roteiro": [
+  {"topico": "O que é reportagem", "explicacao": "Gênero jornalístico que aprofunda um tema."},
+  {"topico": "Notícia x reportagem", "explicacao": "A notícia informa o fato; a reportagem investiga."},
+  {"topico": "Estrutura", "explicacao": "Título, linha fina, corpo, entrevistas e dados."}
+ ],
+ "perguntas": ["O que é reportagem?", "Onde ela circula?", "Qual a diferença para a notícia?"]}
+```"""
+
+
+def test_material_traz_roteiro_e_perguntas(ctx):
+    from profon.ia import gerar_material
+
+    aula = aulas_do_dia(ctx, SEG1)[0]
+    cliente = ClienteFalso(MATERIAL_JSON)
+    m = gerar_material(cliente, aula, 6, {})
+    assert [t["topico"] for t in m["roteiro"]] == ["O que é reportagem", "Notícia x reportagem", "Estrutura"]
+    assert m["perguntas"][0] == "O que é reportagem?"
+    assert len(cliente.chamadas) == 1
+
+
+def test_material_json_invalido_tenta_de_novo(ctx):
+    from profon.ia import gerar_material
+
+    aula = aulas_do_dia(ctx, SEG1)[0]
+    cliente = ClienteFalso("isso não é json", MATERIAL_JSON)
+    assert len(gerar_material(cliente, aula, 6, {})["perguntas"]) == 3
+    assert len(cliente.chamadas) == 2
+
+
+def test_material_sem_roteiro_falha(ctx):
+    from profon.ia import gerar_material
+
+    aula = aulas_do_dia(ctx, SEG1)[0]
+    ruim = '{"roteiro": [], "perguntas": ["a", "b", "c"]}'
+    with pytest.raises(ValueError):
+        gerar_material(ClienteFalso(ruim), aula, 6, {})
+
+
+def test_pregerar_completa_roteiro_de_questionario_antigo(ctx):
+    ctx.estado.salvar_questionario("6ano", "6-a#1/2", ["p1", "p2", "p3"])
+    pregerar(ctx, ClienteFalso(MATERIAL_JSON), {}, SEG1, dias=1)
+    assert len(ctx.estado.material("6ano", "6-a#1/2")["roteiro"]) == 3

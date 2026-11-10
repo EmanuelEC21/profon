@@ -68,18 +68,19 @@ def motivo_falha(e: Exception) -> str:
 
 def pregerar(ctx: Contexto, cliente, habilidades: dict, inicio: date, dias: int = 7) -> list[str]:
     """Gera e salva os questionários do período. Nunca levanta exceção: devolve as falhas em texto."""
-    from profon.ia import gerar_questionario
+    from profon.ia import gerar_material
 
     falhas: list[str] = []
     for i in range(dias):
         dia = inicio + timedelta(days=i)
         for aula in aulas_do_dia(ctx, dia):
-            if aula.conteudo is None or ctx.estado.questionario(_dono(ctx, aula), chave_aula(aula)) is not None:
-                continue
+            existente = ctx.estado.material(_dono(ctx, aula), chave_aula(aula)) if aula.conteudo else None
+            if aula.conteudo is None or (existente and existente["roteiro"]):
+                continue  # sem conteúdo, ou material completo já pronto (o antigo, sem roteiro, é refeito)
             turma = ctx.escola.turma(aula.turma_id)
             try:
-                perguntas = gerar_questionario(cliente, aula, turma.ano, habilidades)
-                ctx.estado.salvar_questionario(_dono(ctx, aula), chave_aula(aula), perguntas)
+                material = gerar_material(cliente, aula, turma.ano, habilidades)
+                ctx.estado.salvar_material(_dono(ctx, aula), chave_aula(aula), material)
             except Exception as e:  # a pré-geração nunca pode derrubar o bot
                 falhas.append(f"{turma.nome} {dia:%d/%m} ({aula.conteudo.titulo}): {motivo_falha(e)}")
     return falhas
@@ -93,7 +94,8 @@ def _bloco(ctx: Contexto, aula: AulaPlanejada) -> str:
     c = aula.conteudo
     codigos = f" · {', '.join(c.habilidades)}" if c.habilidades else ""
     linhas = [f"📚 {nome} — {c.titulo} (aula {aula.numero} de {aula.total}){codigos}", "✏️ Para o quadro:"]
-    perguntas = ctx.estado.questionario(_dono(ctx, aula), chave_aula(aula))
+    material = ctx.estado.material(_dono(ctx, aula), chave_aula(aula))
+    perguntas = material["perguntas"] if material else None
     if perguntas:
         linhas += [f"{i}. {p}" for i, p in enumerate(perguntas, 1)]
     else:

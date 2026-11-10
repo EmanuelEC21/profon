@@ -41,3 +41,17 @@ def test_persiste_em_arquivo(tmp_path):
     e.cancelar("6A", D, "x")
     e.fechar()
     assert Estado(arq).canceladas("6A") == {D}
+
+
+def test_material_roundtrip():
+    e = Estado(":memory:")
+    m = {"roteiro": [{"topico": "t", "explicacao": "x"}], "perguntas": ["p1", "p2", "p3"]}
+    assert e.material("6ano", "6-a#1/2") is None
+    e.salvar_material("6ano", "6-a#1/2", m)
+    assert e.material("6ano", "6-a#1/2") == m
+
+
+def test_material_le_questionario_antigo_sem_roteiro():
+    e = Estado(":memory:")
+    e.salvar_questionario("6ano", "6-a#1/2", ["p1", "p2", "p3"])
+    assert e.material("6ano", "6-a#1/2") == {"roteiro": [], "perguntas": ["p1", "p2", "p3"]}

@@ -145,3 +145,55 @@ def gerar_questionario(cliente: ClienteIA, aula, ano: int, habilidades: dict) ->
         if 3 <= len(perguntas) <= 5:
             return perguntas
     raise ValueError(f"A IA não devolveu de 3 a 5 perguntas para {c.titulo}.")
+
+
+# --- Material da aula: roteiro do professor + questionário, num pedido só ---------------------
+
+SISTEMA_MATERIAL = """Você prepara aulas de Língua Portuguesa para um professor do Maranhão (Ensino Fundamental).
+Para a aula informada, produza:
+1. "roteiro": de 3 a 6 tópicos que o professor deve explicar NESTA aula, na ordem em que vai explicar.
+   Cada tópico tem "topico" (título curto) e "explicacao" (2 a 4 frases dizendo o que explicar e como,
+   com exemplos simples; quando couber, cite autores brasileiros ou maranhenses).
+2. "perguntas": de 3 a 5 perguntas CURTAS para o professor copiar no quadro e os alunos responderem
+   no caderno, como fixação. Linguagem adequada à idade do ano.
+Considere a etapa do conteúdo: aula 1 introduz; aulas do meio aprofundam; a última fecha e pratica.
+Responda SOMENTE com JSON válido: {"roteiro": [{"topico": "...", "explicacao": "..."}], "perguntas": ["..."]}"""
+
+
+def _ler_material(texto: str) -> dict:
+    import json
+
+    inicio, fim = texto.find("{"), texto.rfind("}")
+    if inicio < 0 or fim < 0:
+        raise ValueError("resposta sem JSON")
+    dados = json.loads(texto[inicio : fim + 1])
+    roteiro = [
+        {"topico": str(t.get("topico", "")).strip(), "explicacao": str(t.get("explicacao", "")).strip()}
+        for t in dados.get("roteiro") or []
+        if isinstance(t, dict)
+    ]
+    roteiro = [t for t in roteiro if t["topico"] and t["explicacao"]]
+    perguntas = [_NUMERACAO.sub("", str(p)).strip() for p in dados.get("perguntas") or []]
+    perguntas = [p for p in perguntas if p]
+    if not 3 <= len(roteiro) <= 6 or not 3 <= len(perguntas) <= 5:
+        raise ValueError(f"roteiro com {len(roteiro)} tópicos e {len(perguntas)} perguntas")
+    return {"roteiro": roteiro, "perguntas": perguntas}
+
+
+def gerar_material(cliente: ClienteIA, aula, ano: int, habilidades: dict) -> dict:
+    """Roteiro do professor (3 a 6 tópicos) e questionário de quadro (3 a 5) para uma AulaPlanejada."""
+    c = aula.conteudo
+    descricoes = "\n".join(
+        f"- {cod}: {habilidades[cod].texto}" if cod in habilidades else f"- {cod}" for cod in c.habilidades
+    )
+    mensagem = (
+        f"Ano: {ano}º ano.\nConteúdo: {c.titulo} (aula {aula.numero} de {aula.total} deste conteúdo).\n"
+        f"Habilidades da BNCC:\n{descricoes or '- (não informadas)'}"
+    )
+    erro: Exception | None = None
+    for _ in range(2):
+        try:
+            return _ler_material(cliente.completar(SISTEMA_MATERIAL, mensagem))
+        except ValueError as e:  # json.JSONDecodeError também é ValueError
+            erro = e
+    raise ValueError(f"A IA não devolveu o material no formato esperado para {c.titulo}: {erro}")

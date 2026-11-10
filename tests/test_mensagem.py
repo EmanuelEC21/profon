@@ -40,13 +40,13 @@ def test_questionario_acompanha_o_conteudo_remanejado(ctx):
     from profon.acoes import confirmar_sem_aula
     from profon.mensagem import pregerar
     from tests.conftest import SEG2
-    from tests.test_questionario import QUATRO, ClienteFalso
+    from tests.test_questionario import MATERIAL_JSON as QUATRO, ClienteFalso
 
     pregerar(ctx, ClienteFalso(QUATRO), {}, SEG1, dias=1)  # Crônica aula 1 preparada para SEG1
     confirmar_sem_aula(ctx, SEG1, "feriado")  # Crônica aula 1 vai para SEG2
     texto = compor_mensagens(ctx, SEG2)[0]
     assert "Crônica (aula 1 de 2)" in texto
-    assert "1. O que é crônica?" in texto
+    assert "1. O que é reportagem?" in texto
 
 
 def test_turma_usa_sua_propria_sequencia(ctx):
@@ -76,11 +76,11 @@ def test_turmas_da_mesma_sequencia_compartilham_questionario(ctx):
     from dataclasses import replace
 
     from profon.mensagem import pregerar
-    from tests.test_questionario import QUATRO, ClienteFalso
+    from tests.test_questionario import MATERIAL_JSON as QUATRO, ClienteFalso
 
     t6b = replace(ctx.escola.turma("6A"), id="6B", nome="6º B")
     ctx.escola = replace(ctx.escola, turmas=ctx.escola.turmas + (t6b,))
     cliente = ClienteFalso(QUATRO)
     pregerar(ctx, cliente, {}, SEG1, dias=1)
     assert len(cliente.chamadas) == 2  # 6A e 6B (mesma sequência) = 1 pedido; 9A = 1 pedido
-    assert "1. O que é crônica?" in compor_mensagens(ctx, SEG1)[0].split("6º B")[1]
+    assert "1. O que é reportagem?" in compor_mensagens(ctx, SEG1)[0].split("6º B")[1]

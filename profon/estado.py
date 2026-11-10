@@ -20,6 +20,9 @@ CREATE TABLE IF NOT EXISTS ajustes (
 CREATE TABLE IF NOT EXISTS questionarios (
     turma_id TEXT NOT NULL, chave TEXT NOT NULL, perguntas_json TEXT NOT NULL,
     PRIMARY KEY (turma_id, chave));
+CREATE TABLE IF NOT EXISTS materiais (
+    dono TEXT NOT NULL, chave TEXT NOT NULL, material_json TEXT NOT NULL,
+    PRIMARY KEY (dono, chave));
 """
 
 
@@ -62,6 +65,24 @@ class Estado:
                 "INSERT OR REPLACE INTO questionarios VALUES (?, ?, ?)",
                 (turma_id, chave, json.dumps(perguntas, ensure_ascii=False)),
             )
+
+    def salvar_material(self, dono: str, chave: str, material: dict) -> None:
+        """Material da aula: {"roteiro": [{"topico", "explicacao"}], "perguntas": [...]}.
+        `dono` é a sequência (turmas da mesma sequência compartilham); `chave` é mensagem.chave_aula."""
+        with self._db:
+            self._db.execute(
+                "INSERT OR REPLACE INTO materiais VALUES (?, ?, ?)",
+                (dono, chave, json.dumps(material, ensure_ascii=False)),
+            )
+
+    def material(self, dono: str, chave: str) -> dict | None:
+        linha = self._db.execute(
+            "SELECT material_json FROM materiais WHERE dono = ? AND chave = ?", (dono, chave)
+        ).fetchone()
+        if linha:
+            return json.loads(linha[0])
+        antigo = self.questionario(dono, chave)  # questionários gerados antes do roteiro existir
+        return {"roteiro": [], "perguntas": antigo} if antigo else None
 
     def questionario(self, turma_id: str, chave: str) -> list[str] | None:
         linha = self._db.execute(
