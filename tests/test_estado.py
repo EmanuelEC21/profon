@@ -29,9 +29,9 @@ def test_ajustes():
 
 def test_questionario_roundtrip():
     e = Estado(":memory:")
-    assert e.questionario("6A", D) is None
-    e.salvar_questionario("6A", D, ["O que é crônica?", "Cite um autor."])
-    assert e.questionario("6A", D) == ["O que é crônica?", "Cite um autor."]
+    assert e.questionario("6A", "6-cronica#1/6") is None
+    e.salvar_questionario("6A", "6-cronica#1/6", ["O que é crônica?", "Cite um autor."])
+    assert e.questionario("6A", "6-cronica#1/6") == ["O que é crônica?", "Cite um autor."]
 
 
 def test_persiste_em_arquivo(tmp_path):

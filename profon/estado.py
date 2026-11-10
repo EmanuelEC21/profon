@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS cancelamentos (
 CREATE TABLE IF NOT EXISTS ajustes (
     conteudo_id TEXT PRIMARY KEY, aulas INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS questionarios (
-    turma_id TEXT NOT NULL, data TEXT NOT NULL, perguntas_json TEXT NOT NULL,
-    PRIMARY KEY (turma_id, data));
+    turma_id TEXT NOT NULL, chave TEXT NOT NULL, perguntas_json TEXT NOT NULL,
+    PRIMARY KEY (turma_id, chave));
 """
 
 
@@ -52,15 +52,17 @@ class Estado:
     def ajustes(self) -> dict[str, int]:
         return dict(self._db.execute("SELECT conteudo_id, aulas FROM ajustes"))
 
-    def salvar_questionario(self, turma_id: str, data: date, perguntas: list[str]) -> None:
+    def salvar_questionario(self, turma_id: str, chave: str, perguntas: list[str]) -> None:
+        """`chave` identifica a aula do conteúdo (veja mensagem.chave_aula), não a data: assim o
+        questionário acompanha o conteúdo quando ele é remanejado."""
         with self._db:
             self._db.execute(
                 "INSERT OR REPLACE INTO questionarios VALUES (?, ?, ?)",
-                (turma_id, data.isoformat(), json.dumps(perguntas, ensure_ascii=False)),
+                (turma_id, chave, json.dumps(perguntas, ensure_ascii=False)),
             )
 
-    def questionario(self, turma_id: str, data: date) -> list[str] | None:
+    def questionario(self, turma_id: str, chave: str) -> list[str] | None:
         linha = self._db.execute(
-            "SELECT perguntas_json FROM questionarios WHERE turma_id = ? AND data = ?", (turma_id, data.isoformat())
+            "SELECT perguntas_json FROM questionarios WHERE turma_id = ? AND chave = ?", (turma_id, chave)
         ).fetchone()
         return json.loads(linha[0]) if linha else None
