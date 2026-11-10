@@ -9,3 +9,4 @@ __pycache__/
 /DCTMA.pdf
 *.egg-info/
 /config/escola.yaml
+/*.pdf
